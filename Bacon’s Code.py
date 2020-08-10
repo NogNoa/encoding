@@ -7,7 +7,7 @@ The actual encoding was done by a pair of fonts.
 And than a false messege was written in them to encode the real messege (which was obviously 5 times shorter)
 """
 
-from string import ascii_lowercase
+from string import ascii_lowercase, ascii_uppercase, ascii_letters
 
 order = ascii_lowercase.replace('j', '').replace('v', '')
 
@@ -80,7 +80,7 @@ class abbin:
     def falsify(self, key_packet: str):
         back = ''
         for char in key_packet:
-            if char in ascii_lowercase:
+            if char in ascii_letters:
                 if self.val[0] == 'a':
                     char = char.lower()
                 elif self.val[0] == 'b':
@@ -103,25 +103,38 @@ class false_packet:
         for l in self.val:
             if l in ascii_lowercase:
                 back += 'a'
-            else:
+            elif l in ascii_uppercase:
                 back += 'b'
         return abbin(back)
 
 """Full Objects: Equivalent to the whole of the true message"""
 
-def listise(object,message: str):
+def listise(message: str):
+    back = []
+    while message:
+        letter_index = -1
+        for c in enumerate(message):
+            char = c[1]
+            if char in ascii_letters:
+                letter_index += 1
+                if letter_index >= 4:
+                    break
+        char_index = c[0] + 1
+        back.append(message[:char_index])
+        message = message[char_index:]
+    return back
 
 
 class true_message:
     """format:free.exclude(A-Z)"""
 
     def __init__(self, text: str):
-        self.val = text.lower()
+        self.val = text
 
     def list_abbinise(self):
         back = []
         for l in self.val:
-            if l in ascii_lowercase:
+            if l in ascii_letters:
                 l = letter(l).abbinise()
                 back.append(l)
         return abbin_list(back)
@@ -143,47 +156,51 @@ class abbin_list:
 
     def expose(self):
         back = []
-        for l in self.val:
-            back.append(l.val)
+        for packet in self.val:
+            back.append(packet.val)
         return back
 
-    def flasify(self, key_list : list):
+    def falsify(self, key_message : str):
         back = ''
-        key_list = key_list.val
+        key_list = listise(key_message)
         for i in enumerate(self.val):
             l = i[1]
             key_packet = key_list[i[0]]
             back += l.falsify(key_packet).val
-        return false_messege(back)
+        return false_message(back)
 
 
-class key_list:
-    """format:[free]"""
-
-    def __init__(self, key_message: str):
-        back = []
-        key_message = key_message.lower()
-        while key_message:
-            letter_index = -1
-            for c in enumerate(key_message):
-                char = c[1]
-                if char in ascii_lowercase:
-                    letter_index += 1
-                    if letter_index >= 4:
-                        break
-            char_index = c[0] + 1
-            back.append(key_message[:char_index])
-            key_message = key_message[char_index:]
-        self.val = back
-
-
-class false_messege:
+class false_message:
     """format:free"""
     
     def __init__(self, text: str):
         self.val = text
         
-    def abbinize(self):
+    def abbinise(self):
+        back = []
+        false_list = listise(self.val)
+        for packet in false_list:
+            packet = false_packet(packet)
+            packet = packet.abbinise()
+            back.append(packet)
+        return abbin_list(back)
+
+
+"""Main Functions"""
+
+def Bacon(true: str, key_message: str):
+    true = true_message(true)
+    back = true.list_abbinise().falsify(key_message)
+    print(back.val)
+    return back
+
+
+def decipher(false:str):
+    false = false_message(false)
+    back = false.abbinise().textualise()
+    print(back.val)
+    return back
+
 
 
 if __name__ == "__main__":
@@ -210,6 +227,10 @@ if __name__ == "__main__":
     print(jim)
     print(jim.textualise().val)
     print(jim.expose())
-    lock = key_list("So, here is our first 12 example of a slice: 2:7. The full slice syntax is: start:stop:step. ")
-    print(lock.val)
-    print(jim.flasify(lock))
+    lock = "So, here is our first 12 example of a slice: 2:7. The full slice syntax is: start:stop:step. "
+    joe = jim.falsify(lock)
+    print(joe.abbinise().expose())
+
+"""not TODO: Unite true message and false message. Since true message would inevitibely lose Case information, and 
+false message has non-standard Case formating they are not really compatible. And recursive encoding wouldn't really be 
+fruitfull"""
