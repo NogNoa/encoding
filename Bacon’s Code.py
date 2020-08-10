@@ -11,8 +11,7 @@ from string import ascii_lowercase
 
 order = ascii_lowercase.replace('j', '').replace('v', '')
 
-
-# print(order)
+"""Packet Objects: Equivalent to a letter of the True Massage or 5-bit"""
 
 
 class letter:
@@ -80,13 +79,16 @@ class abbin:
 
     def falsify(self, key_packet: str):
         back = ''
-        for i in range(5):
-            if self.val[i] == 'a':
-                back += key_packet[i].lower()
-            elif self.val[i] == 'b':
-                back += key_packet[i].upper()
-            else:
-                print('That\'s weird. I didn\'t expect any', self.val[i], 'in a&b binary', self.val, '.')
+        for char in key_packet:
+            if char in ascii_lowercase:
+                if self.val[0] == 'a':
+                    char = char.lower()
+                elif self.val[0] == 'b':
+                    char = char.upper()
+                else:
+                    print('That\'s weird. I didn\'t expect any', self.val[0], 'in a&b binary', self.val, '.')
+                self.val = self.val[1:]
+            back += char          
         return false_packet(back)
 
 
@@ -105,6 +107,10 @@ class false_packet:
                 back += 'b'
         return abbin(back)
 
+"""Full Objects: Equivalent to the whole of the true message"""
+
+def listise(object,message: str):
+
 
 class true_message:
     """format:free.exclude(A-Z)"""
@@ -112,7 +118,7 @@ class true_message:
     def __init__(self, text: str):
         self.val = text.lower()
 
-    def listise(self):
+    def list_abbinise(self):
         back = []
         for l in self.val:
             if l in ascii_lowercase:
@@ -125,8 +131,8 @@ class abbin_list:
     """format: [abbin]
     exposed format: [5*(a,b)]"""
 
-    def __init__(self, labb: list):
-        self.val = labb
+    def __init__(self, call: list):
+        self.val = call
 
     def textualise(self):
         back = ''
@@ -143,12 +149,12 @@ class abbin_list:
 
     def flasify(self, key_list : list):
         back = ''
+        key_list = key_list.val
         for i in enumerate(self.val):
             l = i[1]
-            key_list = key_list.val
             key_packet = key_list[i[0]]
             back += l.falsify(key_packet).val
-        return back
+        return false_messege(back)
 
 
 class key_list:
@@ -172,8 +178,12 @@ class key_list:
 
 
 class false_messege:
+    """format:free"""
+    
     def __init__(self, text: str):
         self.val = text
+        
+    def abbinize(self):
 
 
 if __name__ == "__main__":
@@ -196,7 +206,7 @@ if __name__ == "__main__":
     print(jack)
     """
     jack = true_message('Tolkien')
-    jim = jack.listise()
+    jim = jack.list_abbinise()
     print(jim)
     print(jim.textualise().val)
     print(jim.expose())
