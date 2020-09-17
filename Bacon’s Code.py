@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Aug 31 19:47:07 2019
+@author: omer Navon
+"""
+
 """Bacon’s Code
 Bacon used a naïve binary system to encode the alphabeth. This was 24 rather than 26 letters as IJ and UV were combined.
 So each letter was represented by it’s ordinal from 0 to 23,
@@ -88,7 +94,7 @@ class abbin:
                 else:
                     print('That\'s weird. I didn\'t expect any', self.val[0], 'in a&b binary', self.val, '.')
                 self.val = self.val[1:]
-            back += char          
+            back += char
         return false_packet(back)
 
 
@@ -107,7 +113,9 @@ class false_packet:
                 back += 'b'
         return abbin(back)
 
+
 """Full Objects: Equivalent to the whole of the true message"""
+
 
 def listise(message: str):
     back = []
@@ -160,7 +168,7 @@ class abbin_list:
             back.append(packet.val)
         return back
 
-    def falsify(self, key_message : str):
+    def falsify(self, key_message: str):
         back = ''
         key_list = listise(key_message)
         for i in enumerate(self.val):
@@ -172,11 +180,11 @@ class abbin_list:
 
 class false_message:
     """format:free"""
-    
+
     def __init__(self, text: str):
         self.val = text
-        
-    def abbinise(self):
+
+    def list_abbinise(self):
         back = []
         false_list = listise(self.val)
         for packet in false_list:
@@ -188,19 +196,28 @@ class false_message:
 
 """Main Functions"""
 
-def Bacon(true: str, key_message: str):
+
+def expose(call):
+    if type(call) is not str:
+        call = call.val
+    return call
+
+
+def bacon(true, key_message):
+    true = expose(true)
+    key_message = expose(key_message)
     true = true_message(true)
     back = true.list_abbinise().falsify(key_message)
     print(back.val)
     return back
 
 
-def decipher(false:str):
+def decipher(false):
+    false = expose(false)
     false = false_message(false)
-    back = false.abbinise().textualise()
+    back = false.list_abbinise().textualise()
     print(back.val)
     return back
-
 
 
 if __name__ == "__main__":
@@ -229,8 +246,7 @@ if __name__ == "__main__":
     print(jim.expose())
     lock = "So, here is our first 12 example of a slice: 2:7. The full slice syntax is: start:stop:step. "
     joe = jim.falsify(lock)
-    print(joe.abbinise().expose())
+    print(joe.list_abbinise().expose())
 
-"""not TODO: Unite true message and false message. Since true message would inevitibely lose Case information, and 
-false message has non-standard Case formating they are not really compatible. And recursive encoding wouldn't really be 
-fruitfull"""
+    joe = bacon('Tolkien', lock)
+    Jay = decipher(joe)
