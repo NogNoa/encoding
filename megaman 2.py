@@ -13,14 +13,14 @@ def num_pentise(number: int):
 
 class num_list:
     """format: [9*(0-24)]"""
-        
+
     def __init__(self, call: list):
         self.val = call
-    
+
     def num_pentise(self):
         back = [num_pentise(pl).val for pl in self.val]
         return pent_list(back)
-    
+
     def num_statify(self):
         Boss_Ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
         Boss_Post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
@@ -43,15 +43,15 @@ class num_list:
 
         while number_list:
             boss = number_list.pop() - etank
-            boss += 20 * (boss <5)
-            #see comment for {boss -= 20 * (boss > 24)} in function stt_numerise
+            boss += 20 * (boss < 5)
+            # see comment for {boss -= 20 * (boss > 24)} in function stt_numerise
             is_defeated(Boss_Ante, False)
             is_defeated(Boss_Post, True)
         if 2 in bosses:
             print("Invalid Password")
             return
             # raise ValueError()
-        return state_var(bosses, etank)          
+        return state_var(bosses, etank)
 
 
 class pent:
@@ -81,20 +81,14 @@ class pent_list:
         self.val = table
 
     def pent_objectify(self):
-        back = self.val
-        for pl in enumerate(back):
-            back[pl[0]] = pent(pl[1])
+        back = [pent(pl) for pl in self.val]
         return back
 
     def pent_numerise(self):
-        back = self.pent_objectify()
-        for pl in enumerate(back):
-            pl = pl[0]
-            back[pl] = back[pl].pent_numerise()
+        back = [pl.pent_numerise() for pl in self.pent_objectify()]
         return num_list(back)
 
-
-    def make_table(self, file = 'MM2pswd.csv'):
+    def make_table(self, file='MM2pswd.csv'):
         lexicon = {
             'A': [0, 0, 0, 0, 0],
             'B': [0, 0, 0, 0, 0],
@@ -110,7 +104,7 @@ class pent_list:
         back = open(file, 'w+')
         back.write(',1,2,3,4,5\n')
         for i in lexicon:
-            line = i+','
+            line = i + ','
             for j in lexicon[i]:
                 line += '\u2022' * j + ','
                 # the circle symbol ⬤ is U+2B24
@@ -136,10 +130,10 @@ class state_bin:
             bosses[i] = back
         etank = self.val // 2 ** 8
         return state_var(bosses, etank)
-    
-    def save(self, file = 'mm2.sav'):
-        file = open(file,'w+b')
-        back = self.val.to_bytes(2,'little')
+
+    def save(self, file='mm2.sav'):
+        file = open(file, 'w+b')
+        back = self.val.to_bytes(2, 'little')
         file.write(back)
 
 
@@ -181,7 +175,7 @@ class state_var:
             pswd += [boss]
         pswd += [self.etank]
         return num_list(pswd)  # as list of 9 numbers
-    
+
     def stt_binarise(self):
         back = self.etank * 2 ** 8
         for pl in enumerate(self.bosses):
@@ -189,7 +183,29 @@ class state_var:
             cond = pl[1]
             back += cond * 2 ** i
         return state_bin(back)
-    
+
+
+def load_bin(file='mm2.sav'):
+    call = open(file, 'r+b')
+    call = call.read()
+    call = int.from_bytes(call, 'little')
+    return state_bin(call)
+
+
+def table_numerise(file = 'MM2pswd.csv'):
+    call = open(file, 'r+')
+    call = call.readlines()
+    call = [pl.split(',') for pl in call]
+    """
+    for i in call:
+        i = [pl == '•' for pl in i]
+    """
+    back = 0
+    for line in call:
+        for pl in line:
+            if pl == '•':
+                back += call.index(line) * 5 + line.index(pl)
+    return back  # format: (0-24)
 
 
 if __name__ == "__main__":
@@ -209,11 +225,17 @@ if __name__ == "__main__":
     """
     bill = pent_list(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
     bill.make_table()
-    bill = bill.pent_numerise().num_statify()
+    bill = bill.pent_numerise()
+    print(bill)
+    bill = bill.num_statify()
     print(bill.bosses, bill.etank)
     bill = bill.stt_binarise()
     print(bill.val)
     bill.save()
+    mill = load_bin()
+    print(mill, mill.val, type(mill))
+    bill = table_numerise()
+    print(bill)
     """
     bill = pent_list("C3 D5 D2 B5 C4 E4 E2 E1")
     bill.pent_objectify()
