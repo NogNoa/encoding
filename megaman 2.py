@@ -192,7 +192,10 @@ def load_bin(file='mm2.sav'):
     return state_bin(call)
 
 
-def table_numerise(file = 'MM2pswd.csv'):
+def table_num_listise(file='MM2pswd.csv'):
+    if file[:-4] != '.csv':
+        print('Please give me a comma separated table')
+        raise ValueError(file)
     call = open(file, 'r+')
     call = call.readlines()
     call = [pl.split(',') for pl in call]
@@ -200,12 +203,13 @@ def table_numerise(file = 'MM2pswd.csv'):
     for i in call:
         i = [pl == '•' for pl in i]
     """
-    back = 0
+    back = []
     for line in call:
-        for pl in line:
-            if pl == '•':
-                back += call.index(line) * 5 + line.index(pl)
-    return back  # format: (0-24)
+        for pl in range(1, 6):
+            if line[pl] == '•':
+                num = (call.index(line)) * 5 + pl - 6  # -1 from both the 5s & 1s place
+                back.append(num)
+    return num_list(back)
 
 
 if __name__ == "__main__":
@@ -226,7 +230,7 @@ if __name__ == "__main__":
     bill = pent_list(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
     bill.make_table()
     bill = bill.pent_numerise()
-    print(bill)
+    print(bill.val)
     bill = bill.num_statify()
     print(bill.bosses, bill.etank)
     bill = bill.stt_binarise()
@@ -234,15 +238,18 @@ if __name__ == "__main__":
     bill.save()
     mill = load_bin()
     print(mill, mill.val, type(mill))
-    bill = table_numerise()
-    print(bill)
+    bill = table_num_listise()
+    print(bill.val)
     """
     bill = pent_list("C3 D5 D2 B5 C4 E4 E2 E1")
     bill.pent_objectify()
     print(bill.val[2].val)
     print(state_bin(2048).state_variablise())"""
 
-# TODO:File interface; console interface; print to table, mention input format in function name.
+# TODO: console interface;
+# TODO: save > string
+# TODO: table, password <> save
+# DONE: File interface; print to table, mention input format in function name.
 # Boss_list = [Bubbleman, Airman, Quickman, Heatman, Woodman, Metalman, Flashman, Crashman]
 # Boss_Ante = ["C3", 'D2', 'C4', 'D5', 'B5', 'E1', 'E4', 'E2']  # pre-win values
 # Boss_Post = ['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']  # post-win values
