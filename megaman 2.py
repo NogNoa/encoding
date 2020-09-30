@@ -1,17 +1,63 @@
+# -*- coding: utf-8 -*-
+
 from string import ascii_uppercase
 
 
 def num_pentise(number: int):
-    """format: (0 - 24)
-    returns the place in a five by five table of a dot.
+    """input format: (0-24)
+    returns the place of a dot in a five by five table.
      pent values goes from A1 to E5"""
-    back: str = ascii_uppercase[number // 5] + str(number % 5 + 1)
+    back = ascii_uppercase[number // 5] + str(number % 5 + 1)
     return pent(back)
 
 
+class num_list:
+    """format: [9*(0-24)]"""
+        
+    def __init__(self, call: list):
+        self.val = call
+    
+    def num_pentise(self):
+        back = [num_pentise(pl).val for pl in self.val]
+        return pent_list(back)
+    
+    def num_statify(self):
+        Boss_Ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
+        Boss_Post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
+        number_list = self.val[:9]
+        # ^accepting too long inputs but at user's risk as only first 9 items get through
+        etank = min(number_list)
+        number_list.remove(etank)
+        if etank >= 5:
+            print("Invalid Password")
+            return
+            # raise ValueError()
+        bosses = [2, 2, 2, 2, 2, 2, 2, 2]
+
+        # 0 or 1 will not be distinguised from boolians. None should also work, it's just more crowding.
+
+        def is_defeated(group, val):
+            if boss in group:
+                place = group.index(boss)
+                bosses[place] = val
+
+        while number_list:
+            boss = number_list.pop() - etank
+            boss += 20 * (boss <5)
+            #see comment for {boss -= 20 * (boss > 24)} in function stt_numerise
+            is_defeated(Boss_Ante, False)
+            is_defeated(Boss_Post, True)
+        if 2 in bosses:
+            print("Invalid Password")
+            return
+            # raise ValueError()
+        return state_var(bosses, etank)          
+
+
 class pent:
+    """format: (A-E)(1-5)"""
+
     def __init__(self, call: str):
-        """format: (A-E)(1-5)"""
         self.val = call
 
     def pent_numerise(self):
@@ -24,11 +70,15 @@ class pent:
 
 class pent_list:
     """ format: 9*((A-E)(1-5)
-    a list of pent values"""
+    a list of pent values
+    """
 
-    def __init__(self, table: str):
-        # table has to be 9 pent values with spaces!
-        self.val: list = table.split()
+    def __init__(self, table):
+        # table string has to be 9 pent values with spaces!
+        # it could be just a list
+        if type(table) is not list:
+            table: list = table.split()
+        self.val = table
 
     def pent_objectify(self):
         back = self.val
@@ -36,30 +86,68 @@ class pent_list:
             back[pl[0]] = pent(pl[1])
         return back
 
+    def pent_numerise(self):
+        back = self.pent_objectify()
+        for pl in enumerate(back):
+            pl = pl[0]
+            back[pl] = back[pl].pent_numerise()
+        return num_list(back)
+
+
+    def make_table(self, file = 'MM2pswd.csv'):
+        lexicon = {
+            'A': [0, 0, 0, 0, 0],
+            'B': [0, 0, 0, 0, 0],
+            'C': [0, 0, 0, 0, 0],
+            'D': [0, 0, 0, 0, 0],
+            'E': [0, 0, 0, 0, 0],
+        }
+        for pl in self.val:
+            L = pl[0]
+            pl = int(pl[1]) - 1
+            # ^just translating numeral digit from pent to an integer index in the corresponding list
+            lexicon[L][pl] = 1
+        back = open(file, 'w+')
+        back.write(',1,2,3,4,5\n')
+        for i in lexicon:
+            line = i+','
+            for j in lexicon[i]:
+                line += '\u2022' * j + ','
+                # the circle symbol ⬤ is U+2B24
+                # the bullet symbol • is U+2022
+            line += '\n'
+            back.write(line)
+
 
 class state_bin:
     """ format: 11*(0-1)
-    8bits for bosses,3 for Etanks"""
+    low 8bits for bosses, high 3bits for Etanks"""
 
     def __init__(self, call: int):
         if call > 2047:
             raise ValueError(f'state value {call}, {bin(call)} is larger than 11bits')
         self.val = call
 
-    def state_variablise(self):
-        boss = [0, 0, 0, 0, 0, 0, 0, 0]
+    def stt_variablise(self):
+        bosses = [0, 0, 0, 0, 0, 0, 0, 0]
         for i in range(8):
-            back: int = self.val & 2**i
+            back: int = self.val & 2 ** i
             back = bool(back)
-            boss[i] = back
-        etank = self.val // 2**8
-        return state_var(boss, etank)
+            bosses[i] = back
+        etank = self.val // 2 ** 8
+        return state_var(bosses, etank)
+    
+    def save(self, file = 'mm2.sav'):
+        file = open(file,'w+b')
+        back = self.val.to_bytes(2,'little')
+        file.write(back)
 
 
 class state_var:
     """format: [8*(bool)], (0-4)"""
-    def __init__(self, boss, etank):
-        self.boss, self.etank = boss, etank
+
+    def __init__(self, bosses, etank):
+        self.bosses, self.etank = bosses, etank
 
     def inventorise(self):
         def mask(char, cond):
@@ -67,68 +155,74 @@ class state_var:
                 return char
             else:
                 return ' '
-        b = self.boss
-        back  = 'P'  + mask('B', b[0]) + mask('A', b[1]) + mask('Q', b[2])
+
+        b = self.bosses
+        back = 'P' + mask('B', b[0]) + mask('A', b[1]) + mask('Q', b[2])
         back += '\n' + mask('H', b[3]) + mask('W', b[4]) + mask('M', b[5]) + mask('F', b[6])
         back += '\n' + mask('C', b[7]) + mask('1', b[3]) + mask('2', b[1]) + mask('3', b[6])
         return back
 
-    def genpassword(self):
-        Boss_Ante = pent_list("C3 D2 C4 D5 B5 E1 E4 E2")  # pre-win values
-        Boss_Post = pent_list("D1 E3 B4 B2 D3 E5 C1 C5")  # post-win values
+    def stt_numerise(self):
+        # output format: [8*(0-24), (0-4)]
+        Boss_Ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
+        Boss_Post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
         pswd = []
-        for pl in enumerate(self.boss):
+        for pl in enumerate(self.bosses):
             i = pl[0]
             cond = pl[1]
             if cond:
-                back = Boss_Post[i]
+                boss = Boss_Post[i]
             else:
-                back = Boss_Ante[i]
-            back = back.pent_numerise() + self.etank
-            # if we reach E5 which is 24 (4*5 +5 -1) the next should be B1 = 10 (2*5 + 1 - 1)
-            # instead of 25. So 15 less. Thw A row is actually kept for the Etanks count itself.
-            back -= 15*(back > 24)
-            pswd += back
-        pswd += self.etank.num_pentise()
-        return pswd
-
-
-
-
-
-
-
-
-
-
-
-def genpassword(Etank, bossbin):
-    for i in range(8):
-        bs = Boss_Ante.val[i]
-        win = bossbin & (2 ** i)
-        if win:
-            bs = Boss_Post.val[i]
-        bs = pent(bs).pent_numerise()
-        bs += Etank
-        bs = num_pentise(bs)
-        Boss_Ante.val[i] = bs
-    Password: list = [num_pentise(Etank)] + Boss_Ante.val
-    return Password
-
-
-
-
-
+                boss = Boss_Ante[i]
+            boss = boss + self.etank
+            # if we reach E5 which is 24 (4*5 +5 -1) the next should be B1 = 5 (1*5 + 1 - 1)
+            # instead of 25. So 20 less. The A row is actually kept for the Etanks count itself.
+            boss -= 20 * (boss > 24)
+            pswd += [boss]
+        pswd += [self.etank]
+        return num_list(pswd)  # as list of 9 numbers
+    
+    def stt_binarise(self):
+        back = self.etank * 2 ** 8
+        for pl in enumerate(self.bosses):
+            i = pl[0]
+            cond = pl[1]
+            back += cond * 2 ** i
+        return state_bin(back)
+    
 
 
 if __name__ == "__main__":
-    """"jack = (genpassword(0, 255))
-    for i in jack:
-        print(i.val)"""
+    """
+    jack = state_bin(1279).stt_variablise().stt_numerise()
+    jack = jack.num_statify().stt_binarise()
+    print(jack.val)
+    jack.save()
+
+    for a in jack:
+        print(a)
+    bill = pent_list(['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']).pent_objectify()
+    jill = []
+    for a in bill:
+        jill += [a.pent_numerise()]
+    print(jill)
+    """
+    bill = pent_list(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
+    bill.make_table()
+    bill = bill.pent_numerise().num_statify()
+    print(bill.bosses, bill.etank)
+    bill = bill.stt_binarise()
+    print(bill.val)
+    bill.save()
+    """
     bill = pent_list("C3 D5 D2 B5 C4 E4 E2 E1")
     bill.pent_objectify()
     print(bill.val[2].val)
-    print(state_bin(2048).state_variablise())
-
+    print(state_bin(2048).state_variablise())"""
 
 # TODO:File interface; console interface; print to table, mention input format in function name.
+# Boss_list = [Bubbleman, Airman, Quickman, Heatman, Woodman, Metalman, Flashman, Crashman]
+# Boss_Ante = ["C3", 'D2', 'C4', 'D5', 'B5', 'E1', 'E4', 'E2']  # pre-win values
+# Boss_Post = ['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']  # post-win values
+# Boss_Ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
+# Boss_Post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
