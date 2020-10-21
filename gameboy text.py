@@ -1,3 +1,5 @@
+import argparse
+
 file = open('goblinorig.txt', 'w+')
 table =  ' !"Ñ$C&\'®®©+,-./0123456789:Ù¡=¿?ÄABCDEFGHIJKLMNOPQRSTUVWXYZÖÜÀÈÌ'
 call = '05 20 FC FA 1A'
