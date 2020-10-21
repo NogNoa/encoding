@@ -220,12 +220,43 @@ def table_num_listise(file='MM2pswd.csv'):
 
 if __name__ == "__main__":
     # parser functunality
-    parser = argparse.ArgumentParser(description='You can get table or inventory from save or give table or password'
-                                                 'for a save')
-    parser.add_argument('save', help='the path to your target save file')
+
+    def bin_get(type, object=None, bin=None):
+        call = load_bin(bin).bin_variablise()
+        if type in inv:
+            back = call.inventorise()
+        else:
+            back = call.stt_numerise().num_pentise()
+            if type in tbl:
+                back.make_table(object)
+                back = "You created table in " + str(object.path)
+            elif type in pwd:
+                back = ' '.join(back.val)
+            else: # if all types have failed
+                back = 'Something was wrong with the action you entered. Sorry'
+        return back
+
+    def bin_give(type, object=None, bin=None):
+        if type in tbl:
+            call = table_num_listise(object)
+        elif type in pwd:
+            call = pent_list(object)
+            call = call.pent_numerise()
+        else:  # inventory or something else invalid
+            print('Something was wrong with the type you entered. Sorry')
+            return
+        call.num_statify().stt_binarise().save(bin)
+        print("a gamestate was saved from your password")
+
+
+
+
+
+    parser = argparse.ArgumentParser(description='you can only get inventory, it is useless to give it')
     parser.add_argument('action', help='geT or giVe')
     parser.add_argument('type', help='Table, Password or Inventory.')
     parser.add_argument('object', help='path to table file or the password sepereted by hyphens.')
+    parser.add_argument('save', help='the path to your target save file')
     args = parser.parse_args()
     args.action = args.action.lowercase()
     args.type = args.action.lowercase()
@@ -236,41 +267,14 @@ if __name__ == "__main__":
     inv = {'i', 'inventory'}
 
     if args.action in get:
-        call = load_bin(args.save).bin_variablise()
-        if args.type in tbl:
-            call.stt_numerise().num_pentise().make_table(args.object)
-        elif args.tpye in inv:
-            back = call.inventorise()
-            print(back)
-        else:
-            print('Something was wrong with the type you entered. Sorry')
+        print(bin_get(args.type, args.object, args.save))
     elif args.action in giv:
-        if args.type in pwd:
-            call = pent_list(args.object)
-            back = call.pent_numerise()
-        elif args.type in tbl:
-            back = table_num_listise(args.object)
-        else:
-            raise ValueError('Something was wrong with the type you entered. Sorry')
-        back.num_statify().stt_binarise().save(args.save)
+        bin.give(args.type, args.object, args.save)
     else:
         print('Something was wrong with the action you entered. Sorry')
 
 
-def get(type, object, bin):
-    if type not in (tbl.union(pwd).union(inv)):
-        return 'Something was wrong with the action you entered. Sorry'
-    call = load_bin(bin).bin_variablise()
-    if type in inv:
-        back = call.inventorise()
-    else:
-        back = call.stt_numerise().num_pentise()
-        if type in tbl:
-            back.make_table(object)
-            back = "You created table in " + str(object.path)
-        else:  # password
-            back = ' '.join(back.val)
-    return back
+
 
 
 """
@@ -334,9 +338,9 @@ def get(type, object, bin):
     print(bill.val[2].val)
     print(state_bin(2048).bin_variablise())"""
 
-# TODO: console interface;
-# TODO: save > string
-# TODO: table, password <> save
+# DONE: console interface;
+# save > inventory
+# table, password <> save
 # DONE: File interface; print to table, mention input format in function name.
 # Boss_list = [Bubbleman, Airman, Quickman, Heatman, Woodman, Metalman, Flashman, Crashman]
 # Boss_Ante = ["C3", 'D2', 'C4', 'D5', 'B5', 'E1', 'E4', 'E2']  # pre-win values
