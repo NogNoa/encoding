@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from string import ascii_uppercase
+import argparse
 
 
 def num_pentise(number: int):
@@ -77,7 +78,7 @@ class pent_list:
         # table string has to be 9 pent values with spaces!
         # it could be just a list
         if type(table) is not list:
-            table: list = table.split()
+            table: list = table.split('-')
         self.val = table
 
     def pent_objectify(self):
@@ -89,6 +90,8 @@ class pent_list:
         return num_list(back)
 
     def make_table(self, file='MM2pswd.csv'):
+        if file[:-4] != '.csv':
+            file.append('.csv')
         lexicon = {
             'A': [0, 0, 0, 0, 0],
             'B': [0, 0, 0, 0, 0],
@@ -114,7 +117,8 @@ class pent_list:
 
 
 class state_bin:
-    """ format: 11*(0-1)
+    """ format: (0-1279) i.e.
+                ((0-255)+2^8*(0-4))
     low 8bits for bosses, high 3bits for Etanks"""
 
     def __init__(self, call: int):
@@ -122,7 +126,7 @@ class state_bin:
             raise ValueError(f'state value {call}, {bin(call)} is larger than 11bits')
         self.val = call
 
-    def stt_variablise(self):
+    def bin_variablise(self):
         bosses = [0, 0, 0, 0, 0, 0, 0, 0]
         for i in range(8):
             back: int = self.val & 2 ** i
@@ -185,16 +189,18 @@ class state_var:
         return state_bin(back)
 
 
+# file loading functions
+
 def load_bin(file='mm2.sav'):
     call = open(file, 'r+b')
     call = call.read()
-    call = int.from_bytes(call, 'little')
-    return state_bin(call)
+    back = int.from_bytes(call, 'little')
+    return state_bin(back)
 
 
 def table_num_listise(file='MM2pswd.csv'):
     if file[:-4] != '.csv':
-        print('Please give me a comma separated table')
+        print('Please point me to a comma separated table')
         raise ValueError(file)
     call = open(file, 'r+')
     call = call.readlines()
@@ -213,8 +219,90 @@ def table_num_listise(file='MM2pswd.csv'):
 
 
 if __name__ == "__main__":
-    """
-    jack = state_bin(1279).stt_variablise().stt_numerise()
+    # parser functunality
+    parser = argparse.ArgumentParser(description='You can get table or inventory from save or give table or password'
+                                                 'for a save')
+    parser.add_argument('save', help='the path to your target save file')
+    parser.add_argument('action', help='geT or giVe')
+    parser.add_argument('type', help='Table, Password or Inventory.')
+    parser.add_argument('object', help='path to table file or the password sepereted by hyphens.')
+    args = parser.parse_args()
+    args.action = args.action.lowercase()
+    args.type = args.action.lowercase()
+    get = {'t', 'get'}
+    giv = {'v', 'give'}
+    tbl = {'t', 'table'}
+    pwd = {'p', 'password'}
+    inv = {'i', 'inventory'}
+
+    if args.action in get:
+        call = load_bin(args.save).bin_variablise()
+        if args.type in tbl:
+            call.stt_numerise().num_pentise().make_table(args.object)
+        elif args.tpye in inv:
+            back = call.inventorise()
+            print(back)
+        else:
+            print('Something was wrong with the type you entered. Sorry')
+    elif args.action in giv:
+        if args.type in pwd:
+            call = pent_list(args.object)
+            back = call.pent_numerise()
+        elif args.type in tbl:
+            back = table_num_listise(args.object)
+        else:
+            raise ValueError('Something was wrong with the type you entered. Sorry')
+        back.num_statify().stt_binarise().save(args.save)
+    else:
+        print('Something was wrong with the action you entered. Sorry')
+
+
+def get(type, object, bin):
+    if type not in (tbl.union(pwd).union(inv)):
+        return 'Something was wrong with the action you entered. Sorry'
+    call = load_bin(bin).bin_variablise()
+    if type in inv:
+        back = call.inventorise()
+    else:
+        back = call.stt_numerise().num_pentise()
+        if type in tbl:
+            back.make_table(object)
+            back = "You created table in " + str(object.path)
+        else:  # password
+            back = ' '.join(back.val)
+    return back
+
+
+"""
+    if args.action in get:
+        call = load_bin(args.save).bin_variablise()
+        if args.tpye in inv:
+            back = call.inventorise()
+            print(back)
+        else:
+            back = call.stt_numerise().num_pentise()
+            if args.type in tbl:
+                call.stt_numerise().num_pentise().make_table(args.object)
+                print("You created table in ", args.object.path)
+            else:
+                print(back)
+        else:
+            print('Something was wrong with the type you entered. Sorry')
+    elif args.action in giv:
+        if args.type in pwd:
+            call = pent_list(args.object)
+            back = call.pent_numerise()
+        elif args.type in tbl:
+            back = table_num_listise(args.object)
+        else:
+            raise ValueError('Something was wrong with the type you entered. Sorry')
+        back.num_statify().stt_binarise().save(args.save)
+    else:
+        print('Something was wrong with the action you entered. Sorry')
+"""
+
+"""
+    jack = state_bin(1279).bin_variablise().stt_numerise()
     jack = jack.num_statify().stt_binarise()
     print(jack.val)
     jack.save()
@@ -226,7 +314,7 @@ if __name__ == "__main__":
     for a in bill:
         jill += [a.pent_numerise()]
     print(jill)
-    """
+    
     bill = pent_list(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
     bill.make_table()
     bill = bill.pent_numerise()
@@ -240,11 +328,11 @@ if __name__ == "__main__":
     print(mill, mill.val, type(mill))
     bill = table_num_listise()
     print(bill.val)
-    """
-    bill = pent_list("C3 D5 D2 B5 C4 E4 E2 E1")
+    
+    bill = pent_list("C3-D5-D2-B5-C4-E4-E2-E1")
     bill.pent_objectify()
     print(bill.val[2].val)
-    print(state_bin(2048).state_variablise())"""
+    print(state_bin(2048).bin_variablise())"""
 
 # TODO: console interface;
 # TODO: save > string
