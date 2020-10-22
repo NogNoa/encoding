@@ -213,7 +213,7 @@ def table_num_listise(file='MM2pswd.csv'):
     for line in call:
         for pl in range(1, 6):
             if line[pl] == '•':
-                num = (call.index(line)) * 5 + pl - 6  # -1 from both the 5s & 1s place
+                num = (call.index(line)) * 5 + pl - 6  # -1 from both the 5s & 1s places
                 back.append(num)
     return num_list(back)
 
