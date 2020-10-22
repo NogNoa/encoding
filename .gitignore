@@ -1,5 +1,8 @@
 # Default ignored files
 .idea/
+.idea\
 venv/
+*.csv
+mm2.sav
 goblin*
-*.tgf
+bacon code.tgf
