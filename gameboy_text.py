@@ -1,11 +1,16 @@
-file = open('goblinorig.txt', 'w+')
-table =  ' !"Ñ$C&\'®®©+,-./0123456789:Ù¡=¿?ÄABCDEFGHIJKLMNOPQRSTUVWXYZÖÜÀÈÌ'
-call = '05 20 FC FA 1A'
-call =call.split(' ')
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('bin')
+parser.add_argument('text')
+args = parser.parse_args()
+table = ' !"Ñ$C&\'®®©+,-./0123456789:Ù¡=¿?ÄABCDEFGHIJKLMNOPQRSTUVWXYZÖÜÀÈÌ'
+# call = open(args.bin, 'rb')
+call = open("D:\\temp\\patching teach\\Gargoyle's Quest - Text Restoration.ips", 'rb')
 back = ''
-for h in call:
-    h = int(h,16)
-    h -= 0x20
+while call:
+    h = call.read(1)
+    h = int(h) - 0x20
     char = h % 0b1000000
     char = table[char]
     char = str(char)
@@ -22,4 +27,5 @@ for h in call:
         print('error:', char)
     back += char + white
 print(back)
-file.write(back)
+text = open('args.text', 'w+')
+text.write(back)
