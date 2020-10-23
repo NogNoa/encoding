@@ -17,7 +17,7 @@ from string import ascii_lowercase, ascii_uppercase, ascii_letters
 
 order = ascii_lowercase.replace('j', '').replace('v', '')
 
-"""Packet Objects: Equivalent to a letter of the True Massage or 5-bit"""
+"""all Packet Objects are Equivalent to a letter of the True Massage or 5-bit"""
 
 
 class letter:
@@ -43,13 +43,13 @@ class ordinal:
 
     def __init__(self, ordinal: int):
         self.val = ordinal
-        self.bin = bin(ordinal)
 
     def letterise(self):
         return letter(order[self.val])
 
     def abbinise(self):
-        strbin = str(self.bin)[2:]
+        bn = bin(self.val)
+        strbin = str(bn)[2:]  # remove 0b prefix
         strab = ''
         for b in strbin:
             if b == '0':
