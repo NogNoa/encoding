@@ -17,7 +17,7 @@ from string import ascii_lowercase, ascii_uppercase, ascii_letters
 
 order = ascii_lowercase.replace('j', '').replace('v', '')
 
-"""Packet Objects: Equivalent to a letter of the True Massage or 5-bit"""
+"""all Packet Objects are Equivalent to a letter of the True Massage or 5-bit"""
 
 
 class letter:
@@ -43,13 +43,13 @@ class ordinal:
 
     def __init__(self, ordinal: int):
         self.val = ordinal
-        self.bin = bin(ordinal)
 
     def letterise(self):
         return letter(order[self.val])
 
     def abbinise(self):
-        strbin = str(self.bin)[2:]
+        bn = bin(self.val)
+        strbin = str(bn)[2:]  # remove 0b prefix
         strab = ''
         for b in strbin:
             if b == '0':
@@ -64,9 +64,10 @@ class abbin:
     ab-binary"""
 
     def __init__(self, abbin: str):
+        # we always want to have 5 bits
+        # negative difs will be queitly treated as 0
         dif = 5 - len(abbin)
         abbin = dif * 'a' + abbin
-        # we always want to have 5 bits
         self.val = abbin
 
     def ordinise(self):
@@ -77,7 +78,7 @@ class abbin:
             elif b == 'b':
                 strbin += '1'
             else:
-                print('That\'s weird. I didn\'t expect any', b, 'in a&b binary', self.val, '.')
+                print(f'That\'s weird. I didn\'t expect any {b} in a&b binary {self.val}.')
         return ordinal(int(strbin, 2))
 
     def letterise(self):
@@ -92,7 +93,7 @@ class abbin:
                 elif self.val[0] == 'b':
                     char = char.upper()
                 else:
-                    print('That\'s weird. I didn\'t expect any', self.val[0], 'in a&b binary', self.val, '.')
+                    print(f'That\'s weird. I didn\'t expect any {self.val[0]} in a&b binary {self.val}.')
                 self.val = self.val[1:]
             back += char
         return false_packet(back)
