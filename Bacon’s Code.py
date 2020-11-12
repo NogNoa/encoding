@@ -203,20 +203,46 @@ def expose(call):
     return call
 
 
-def bacon(true, key_message):
-    true = expose(true)
-    key_message = expose(key_message)
-    true = true_message(true)
-    back = true.list_abbinise().falsify(key_message)
+def bacon(true, key):
+    if type(true) is str:
+        true = true_message(true)
+    key = expose(key)
+    back = true.list_abbinise().falsify(key)
     print(back.val)
     return back
 
 
 def decipher(false):
-    false = expose(false)
-    false = false_message(false)
+    if type(false) is str:
+        false = false_message(false)
     back = false.list_abbinise().textualise()
     print(back.val)
+    return back
+
+
+"""file interface"""
+
+
+def load_file(file):
+    return open(file, 'r').read()
+
+
+def save_file(file, message):
+    return open(file, 'w+').write(message)
+
+
+def bacon_file(true, key, false='false-message.txt'):
+    true = load_file(true)
+    key = load_file(key)
+    back = true_message(true).list_abbinise().falsify(key)
+    save_file(false, back)
+    return back
+
+
+def decipher_file(false, true='true-message.txt'):
+    false = load_file(false)
+    back = false_message(false).list_abbinise().textualise()
+    save_file(true, back)
     return back
 
 
