@@ -20,7 +20,7 @@ order = ascii_lowercase.replace('j', '').replace('v', '')
 """all Packet Objects are Equivalent to a letter of the True Massage or 5-bit"""
 
 
-class letter:
+class Letter:
     """format:1*(a-z).exclude(j,v)"""
 
     def __init__(self, letter: str):
@@ -32,20 +32,20 @@ class letter:
         self.val = letter
 
     def ordinise(self):
-        return ordinal(order.index(self.val))
+        return Ordinal(order.index(self.val))
 
     def abbinise(self):
         return self.ordinise().abbinise()
 
 
-class ordinal:
+class Ordinal:
     """Format:(0-23)"""
 
     def __init__(self, ordinal: int):
         self.val = ordinal
 
     def letterise(self):
-        return letter(order[self.val])
+        return Letter(order[self.val])
 
     def abbinise(self):
         bn = bin(self.val)
@@ -56,10 +56,10 @@ class ordinal:
                 strab += 'a'
             else:
                 strab += 'b'
-        return abbin(strab)
+        return abBin(strab)
 
 
-class abbin:
+class abBin:
     """format:5*(a,b)
     ab-binary"""
 
@@ -79,7 +79,7 @@ class abbin:
                 strbin += '1'
             else:
                 print(f'That\'s weird. I didn\'t expect any {b} in a&b binary {self.val}.')
-        return ordinal(int(strbin, 2))
+        return Ordinal(int(strbin, 2))
 
     def letterise(self):
         return self.ordinise().letterise()
@@ -96,10 +96,10 @@ class abbin:
                     print(f'That\'s weird. I didn\'t expect any {self.val[0]} in a&b binary {self.val}.')
                 self.val = self.val[1:]
             back += char
-        return false_packet(back)
+        return FalsePacket(back)
 
 
-class false_packet:
+class FalsePacket:
     """format:5*(a-z,A-Z)"""
 
     def __init__(self, string: str):
@@ -112,7 +112,7 @@ class false_packet:
                 back += 'a'
             elif l in ascii_uppercase:
                 back += 'b'
-        return abbin(back)
+        return abBin(back)
 
 
 """Full Objects: Equivalent to the whole of the true message"""
@@ -134,7 +134,7 @@ def listise(message: str):
     return back
 
 
-class true_message:
+class TrueMessage:
     """format:free.exclude(A-Z)"""
 
     def __init__(self, text: str):
@@ -144,12 +144,12 @@ class true_message:
         back = []
         for l in self.val:
             if l in ascii_letters:
-                l = letter(l).abbinise()
+                l = Letter(l).abbinise()
                 back.append(l)
-        return abbin_list(back)
+        return abBinList(back)
 
 
-class abbin_list:
+class abBinList:
     """format: [abbin]
     exposed format: [5*(a,b)]"""
 
@@ -161,7 +161,7 @@ class abbin_list:
         for l in self.val:
             l = l.letterise()
             back += l.val
-        return true_message(back)
+        return TrueMessage(back)
 
     def expose(self):
         back = []
@@ -176,10 +176,10 @@ class abbin_list:
             l = i[1]
             key_packet = key_list[i[0]]
             back += l.falsify(key_packet).val
-        return false_message(back)
+        return FalseMessage(back)
 
 
-class false_message:
+class FalseMessage:
     """format:free"""
 
     def __init__(self, text: str):
@@ -189,10 +189,10 @@ class false_message:
         back = []
         false_list = listise(self.val)
         for packet in false_list:
-            packet = false_packet(packet)
+            packet = FalsePacket(packet)
             packet = packet.abbinise()
             back.append(packet)
-        return abbin_list(back)
+        return abBinList(back)
 
 
 """Main Functions"""
@@ -206,7 +206,7 @@ def expose(call):
 
 def bacon(true, key):
     if type(true) is str:
-        true = true_message(true)
+        true = TrueMessage(true)
     key = expose(key)
     back = true.list_abbinise().falsify(key)
     print(back.val)
@@ -215,7 +215,7 @@ def bacon(true, key):
 
 def decipher(false):
     if type(false) is str:
-        false = false_message(false)
+        false = FalseMessage(false)
     back = false.list_abbinise().textualise()
     print(back.val)
     return back
@@ -229,20 +229,20 @@ def load_file(file):
 
 
 def save_file(file, message):
-    return open(file, 'w+').write(message)
+    open(file, 'w+').write(message)
 
 
 def bacon_file(true, key, false='false-message.txt'):
     true = load_file(true)
     key = load_file(key)
-    back = true_message(true).list_abbinise().falsify(key)
+    back = TrueMessage(true).list_abbinise().falsify(key)
     save_file(false, back)
     return back
 
 
 def decipher_file(false, true='true-message.txt'):
     false = load_file(false)
-    back = false_message(false).list_abbinise().textualise()
+    back = FalseMessage(false).list_abbinise().textualise()
     save_file(true, back)
     return back
 
@@ -266,7 +266,7 @@ if __name__ == "__main__":
         jack += l.val + ' '
     print(jack)
     """
-    jack = true_message('Tolkien')
+    jack = TrueMessage('Tolkien')
     jim = jack.list_abbinise()
     print(jim)
     print(jim.textualise().val)
