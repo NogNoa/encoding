@@ -1,3 +1,15 @@
+def binarise(call):
+    if type(call) == int:
+        call = bin(call)[2:]
+    """
+    elif type(call) == str:
+        for char in call:
+            if char != '0' and char != '1':
+                call.replace(char, '')
+    """
+    return call
+
+
 class Clock:
     def __init__(self):
         self.val = 0
@@ -8,39 +20,66 @@ class Clock:
 
 class Data:
     def __init__(self, call: int):
-        self.val = bin(call)[2:]
-        self.pl = 0
+        self.val = binarise(call)
 
-    def tick(self):
-        if self.pl >= len(self.val):
+    def tick(self, clock):
+        try:
+            back = self.val[0]
+        except IndexError:
             back = -1
-        else:
-            back = self.val[self.pl]
         if not clock.val:
-            self.pl += 1
+            self.val = self.val[1:]  # delete first char every time clock is 0
         return back
 
+    def append(self, call):
+        self.val += binarise(call)
 
-def manchester(call):
+
+class Transmitter:
+
+    def __init__(self):
+        self.clock = Clock()
+
+    def tick(self):
+        self.clock.tick()
+        signal = data.tick(self.clock)
+        signal = manchester(signal, self.clock)
+        print(signal)
+        return signal
+
+
+class Reciever:
+
+    def __init__(self):
+        self.clock = Clock()
+        self.mem = 0
+
+    def tick(self, signal):
+        self.clock.tick()
+        signal = int(signal)
+        if self.clock.val:
+            self.mem = manchester(signal, self.clock)
+        else:
+            val = manchester(signal, self.clock)
+            if val == self.mem:
+                return val
+            else:
+                self.tick(signal)
+
+
+def manchester(call, clock):
     if call == -1:
-        return -1
-    return int(call) ^ clock.val
+        back = call
+    else:
+        back = call ^ clock.val
+    return back
 
 
-
-
-
-clock = Clock()
 data = Data(11)
-
-
-def mantick():
-    clock.tick()
-    signal = data.tick()
-    signal = manchester(signal)
-    print(signal)
-
-
+transmitter = Transmitter()
 
 for i in range(8):
-    mantick()
+    transmitter.tick()
+
+# todo: get data in transmitter
+# change -1 to 00 and make receiver being able to interpret 0000 as end of transmision.
