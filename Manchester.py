@@ -24,15 +24,15 @@ class Data:
 
     def tick(self, clock):
         try:
-            back = self.val[0]
+            back = self.val[-1]
         except IndexError:
             back = -1
         if not clock.val:
-            self.val = self.val[1:]  # delete first char every time clock is 0
+            self.val = self.val[:-1]  # delete last char every time clock is 0
         return back
 
     def append(self, call):
-        self.val += binarise(call)
+        self.val = binarise(call) + self.val
 
 
 class Transmitter:
