@@ -40,6 +40,12 @@ class Clock:
     def tick(self):
         self.val = not self.val
 
+    def __str__(self):
+        if self.val:
+            return "Tick"
+        else:
+            return "Tock"
+
 
 class Data:
     def __init__(self, call: int):
@@ -48,6 +54,7 @@ class Data:
     def tick(self, clock):
         try:
             back = self.val[-1]
+            back = int(back)
         except IndexError:
             back = None
         if not clock.val:
@@ -99,11 +106,11 @@ class Reciever:
                 self.tick(signal)
 
 
-def manchester(call, clock):
-    if call is None:
+def manchester(signal, clock):
+    if signal is None:
         back = 0
     else:
-        back = call ^ clock.val
+        back = signal ^ clock.val
     return back
 
 

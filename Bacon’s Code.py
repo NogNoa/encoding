@@ -31,6 +31,9 @@ class Letter:
             letter = 'u'
         self.val = letter
 
+    def __str__(self):
+        return self.val
+
     def ordinise(self):
         return Ordinal(order.index(self.val))
 
@@ -43,6 +46,9 @@ class Ordinal:
 
     def __init__(self, ordinal: int):
         self.val = ordinal
+
+    def __int__(self):
+        return self.val
 
     def letterise(self):
         return Letter(order[self.val])
@@ -69,6 +75,9 @@ class abBin:
         dif = 5 - len(abbin)
         abbin = dif * 'a' + abbin
         self.val = abbin
+
+    def __str__(self):
+        return self.val
 
     def ordinise(self):
         strbin = ''
@@ -105,6 +114,9 @@ class FalsePacket:
     def __init__(self, string: str):
         self.val = string
 
+    def __str__(self):
+        return self.val
+
     def abbinise(self):
         back = ''
         for l in self.val:
@@ -140,6 +152,9 @@ class TrueMessage:
     def __init__(self, text: str):
         self.val = text
 
+    def __str__(self):
+        return self.val
+
     def list_abbinise(self):
         back = []
         for l in self.val:
@@ -155,6 +170,9 @@ class abBinList:
 
     def __init__(self, call: list):
         self.val = call
+
+    def __str__(self):
+        return str(self.expose())
 
     def textualise(self):
         back = ''
@@ -184,6 +202,9 @@ class FalseMessage:
 
     def __init__(self, text: str):
         self.val = text
+
+    def __str__(self):
+        return self.val
 
     def list_abbinise(self):
         back = []
