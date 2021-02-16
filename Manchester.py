@@ -48,8 +48,11 @@ class Clock:
 
 
 class Data:
-    def __init__(self, call: int):
-        self.val = binarise(call)
+    def __init__(self, call: int = None):
+        if call is None:
+            self.val = ''
+        else:
+            self.val = binarise(call)
 
     def tick(self, clock):
         try:
@@ -69,12 +72,15 @@ class Transmitter:
 
     def __init__(self):
         self.clock = Clock()
+        self.data = Data()
+
+    def load(self, msg: int):
+        self.data.append(msg)
 
     def tick(self):
         self.clock.tick()
-        signal = data.tick(self.clock)
+        signal = self.data.tick(self.clock)
         signal = manchester(signal, self.clock)
-        print(signal)
         return signal
 
 
@@ -91,14 +97,14 @@ class Reciever:
         if self.clock.val:
             self.prev = manchester(signal, self.clock)
         else:
-            val = manchester(signal, self.clock)
-            if val == self.prev:
+            msg = manchester(signal, self.clock)
+            if msg == self.prev:
                 self.retrii = 0
-                return val
+                return msg
             else:
                 self.retrii += 1
                 if self.retrii == 3:
-                    stderr.write(str(val)*4)
+                    stderr.write(str(msg) * 4)
                     exit()
                 self.tick(signal)
 
@@ -111,11 +117,19 @@ def manchester(signal, clock):
     return back
 
 
-data = Data(11)
-transmitter = Transmitter()
+if __name__ == "__main__":
+    transmitter = Transmitter()
+    transmitter.load(11)
+    receiver = Reciever()
+    out = ''
 
-for i in range(8):
-    transmitter.tick()
+    for i in range(8):
+        sign = transmitter.tick()
+        sign = receiver.tick(sign)
+        if sign is not None:
+            out += str(sign)
+    print(out)
 
-# todo: get data in transmitter
-# Done: change -1 to 00 and make receiver being able to interpret 0000 as end of transmision.
+# todo:
+# Done: get data in transmitter
+# change -1 to 00 and make receiver being able to interpret 0000 as end of transmision.
