@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from string import ascii_uppercase
+from string import ascii_uppercase, ascii_lowercase
+#from codecs import open as cdcopen
 import argparse
+
 
 
 def num_pentise(number: int):
@@ -234,6 +236,7 @@ def table_num_listise(file='MM2pswd.csv'):
 
 
 if __name__ == "__main__":
+    """
     # parser functunality
 
     def bin_get(type_, object_=None, bin_=None):
@@ -271,10 +274,10 @@ if __name__ == "__main__":
     parser.add_argument('action', help='geT or giVe')
     parser.add_argument('type', help='Table, Password or Inventory.')
     parser.add_argument('object', help='path to table file or the password sepereted by hyphens.')
-    parser.add_argument('save', help='the path to your target save file')
+    parser.add_argument('--save', help='the path to your target save file')
     args = parser.parse_args()
-    args.action = args.action.lowercase()
-    args.type = args.action.lowercase()
+    args.action = args.action.lower()
+    args.type = args.action.lower()
     get = {'t', 'get'}
     giv = {'v', 'give'}
     tbl = {'t', 'table'}
@@ -291,8 +294,8 @@ if __name__ == "__main__":
 
 
 
-
-"""
+    """
+    """
     if args.action in get:
         call = load_bin(args.save).bin_variablise()
         if args.tpye in inv:
@@ -320,26 +323,23 @@ if __name__ == "__main__":
         print('Something was wrong with the action you entered. Sorry')
 """
 
-"""
-    jack = state_bin(1279).bin_variablise().stt_numerise()
+    jack = StateBin(1279).bin_variablise().stt_numerise()
     jack = jack.num_statify().stt_binarise()
     print(jack.val)
     jack.save()
 
-    for a in jack:
-        print(a)
-    bill = pent_list(['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']).pent_objectify()
+    bill = PentList(['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']).pent_objectify()
     jill = []
     for a in bill:
         jill += [a.pent_numerise()]
     print(jill)
     
-    bill = pent_list(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
+    bill = PentList(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
     bill.make_table()
     bill = bill.pent_numerise()
     print(bill.val)
     bill = bill.num_statify()
-    print(bill.bosses, bill.etank)
+    print(bill.bossi, bill.etank)
     bill = bill.stt_binarise()
     print(bill.val)
     bill.save()
@@ -348,10 +348,11 @@ if __name__ == "__main__":
     bill = table_num_listise()
     print(bill.val)
     
-    bill = pent_list("C3-D5-D2-B5-C4-E4-E2-E1")
+    bill = PentList("C3-D5-D2-B5-C4-E4-E2-E1")
     bill.pent_objectify()
     print(bill.val[2].val)
-    print(state_bin(2048).bin_variablise())"""
+    print(StateBin(2048).bin_variablise())
+
 
 # DONE: console interface;
 # save > inventory

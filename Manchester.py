@@ -96,13 +96,10 @@ class Reciever:
                 self.retrii = 0
                 return val
             else:
-                if self.retrii == 2:
-                    # 1st that is the same didn't cause a retry. 2nd and 3rd rised retrii from 0 to 2.
-                    # Now it's the forth bit in a row that is the same.
+                self.retrii += 1
+                if self.retrii == 3:
                     stderr.write(str(val)*4)
                     exit()
-                else:
-                    self.retrii += 1
                 self.tick(signal)
 
 
