@@ -130,6 +130,6 @@ if __name__ == "__main__":
             out += str(sign)
     print(out)
 
-# todo:
+#
 # Done: get data in transmitter
 # change -1 to 00 and make receiver being able to interpret 0000 as end of transmision.
