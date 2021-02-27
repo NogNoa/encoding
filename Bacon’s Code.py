@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from string import ascii_lowercase, ascii_uppercase, ascii_letters
+
 """
 Created on Sat Aug 31 19:47:07 2019
 @author: omer Navon
@@ -12,8 +15,6 @@ Instead of 0 and 1 he used ‘a’ and ‘b’ but this was only for discussing 
 The actual encoding was done by a pair of fonts.
 And than a false messege was written in them to encode the real messege (which was obviously 5 times shorter)
 """
-
-from string import ascii_lowercase, ascii_uppercase, ascii_letters
 
 order = ascii_lowercase.replace('j', '').replace('v', '')
 
@@ -119,10 +120,10 @@ class FalsePacket:
 
     def abbinise(self):
         back = ''
-        for l in self.val:
-            if l in ascii_lowercase:
+        for ltr in self.val:
+            if ltr in ascii_lowercase:
                 back += 'a'
-            elif l in ascii_uppercase:
+            elif ltr in ascii_uppercase:
                 back += 'b'
         return abBin(back)
 
@@ -157,10 +158,10 @@ class TrueMessage:
 
     def list_abbinise(self):
         back = []
-        for l in self.val:
-            if l in ascii_letters:
-                l = Letter(l).abbinise()
-                back.append(l)
+        for ltr in self.val:
+            if ltr in ascii_letters:
+                ltr = Letter(ltr).abbinise()
+                back.append(ltr)
         return abBinList(back)
 
 
@@ -176,9 +177,9 @@ class abBinList:
 
     def textualise(self):
         back = ''
-        for l in self.val:
-            l = l.letterise()
-            back += l.val
+        for abbin in self.val:
+            abbin = abbin.letterise()
+            back += abbin.val
         return TrueMessage(back)
 
     def expose(self):
@@ -190,10 +191,9 @@ class abBinList:
     def falsify(self, key_message: str):
         back = ''
         key_list = listise(key_message)
-        for i in enumerate(self.val):
-            l = i[1]
-            key_packet = key_list[i[0]]
-            back += l.falsify(key_packet).val
+        for pl, abbin in enumerate(self.val):
+            key_packet = key_list[pl]
+            back += abbin.falsify(key_packet).val
         return FalseMessage(back)
 
 

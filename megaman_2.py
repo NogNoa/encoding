@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from string import ascii_uppercase, ascii_lowercase
-#from codecs import open as cdcopen
+from string import ascii_uppercase
+# from codecs import open as cdcopen
 import argparse
-
 
 
 def num_pentise(number: int):
@@ -236,65 +235,67 @@ def table_num_listise(file='MM2pswd.csv'):
 
 
 if __name__ == "__main__":
-    """
+
     # parser functunality
 
     def bin_get(type_, object_=None, bin_=None):
         call = load_bin(bin_).bin_variablise()
-        if type_ in inv:
+        if type_[0] == 'i':
             back = call.inventorise()
         else:
             back = call.stt_numerise().num_pentise()
-            if type_ in tbl:
+            if type_[0] == 't':
                 back.make_table(object_)
                 back = "You created table in " + str(object_.path)
-            elif type_ in pwd:
+            elif type_[0] == 'p':
                 back = ' '.join(back.val)
-            else: # if all types have failed
-                back = 'Something was wrong with the action you entered. Sorry'
+            else:  # if all types have failed
+                exit(3)
         return back
 
+
     def bin_give(type_, object_=None, bin_=None):
-        if type_ in tbl:
+        if type_[0] == 't':
             call = table_num_listise(object_)
-        elif type_ in pwd:
+        elif type_[0] == 'p':
             call = PentList(object_)
             call = call.pent_numerise()
         else:  # inventory or something else invalid
-            print('Something was wrong with the type you entered. Sorry')
-            return
+            exit(4)
         call.num_statify().stt_binarise().save(bin_)
         print("a gamestate was saved from your password")
 
 
-
-
-
     parser = argparse.ArgumentParser(description='you can only get inventory, it is useless to give it')
-    parser.add_argument('action', help='geT or giVe')
-    parser.add_argument('type', help='Table, Password or Inventory.')
+    actions = parser.add_mutually_exclusive_group()
+    actions.add_argument('-T', '--get', help='Get from me, the program, a type of object')
+    actions.add_argument('-V', '-v', '--give', help='Give to me, the program, a type of object, to save it to a file')
+    typs = parser.add_mutually_exclusive_group()
+    typs.add_argument('-t', '--table', help='')
+    typs.add_argument('-p', '-P', '--password', help='')
+    typs.add_argument('-i', '-I', '--inventory', help='')
     parser.add_argument('object', help='path to table file or the password sepereted by hyphens.')
     parser.add_argument('--save', help='the path to your target save file')
     args = parser.parse_args()
-    args.action = args.action.lower()
-    args.type = args.action.lower()
-    get = {'t', 'get'}
-    giv = {'v', 'give'}
-    tbl = {'t', 'table'}
-    pwd = {'p', 'password'}
-    inv = {'i', 'inventory'}
 
-    if args.action in get:
-        print(bin_get(args.type, args.object, args.save))
-    elif args.action in giv:
-        bin.give(args.type, args.object, args.save)
+    if args.table:
+        typ = ('t', args.table)
+    elif args.password:
+        typ = ('p', args.password)
+    elif args.inventory:
+        typ = ('i', args.inventory)
+    else:  # if all types have failed
+        back = 'Something was wrong with the type you entered. Sorry'
+        exit(2)
+
+    if args.get:
+        print(bin_get(type_=typ, object_=args.object, bin_=args.save))
+    elif args.give:
+        bin.give(type_=typ, object_=args.object, bin_=args.save)
     else:
         print('Something was wrong with the action you entered. Sorry')
+        exit(1)
 
-
-
-
-    """
     """
     if args.action in get:
         call = load_bin(args.save).bin_variablise()
@@ -321,7 +322,7 @@ if __name__ == "__main__":
         back.num_statify().stt_binarise().save(args.save)
     else:
         print('Something was wrong with the action you entered. Sorry')
-"""
+
 
     jack = StateBin(1279).bin_variablise().stt_numerise()
     jack = jack.num_statify().stt_binarise()
@@ -333,7 +334,7 @@ if __name__ == "__main__":
     for a in bill:
         jill += [a.pent_numerise()]
     print(jill)
-    
+
     bill = PentList(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
     bill.make_table()
     bill = bill.pent_numerise()
@@ -347,14 +348,16 @@ if __name__ == "__main__":
     print(mill, mill.val, type(mill))
     bill = table_num_listise()
     print(bill.val)
-    
+
     bill = PentList("C3-D5-D2-B5-C4-E4-E2-E1")
     bill.pent_objectify()
     print(bill.val[2].val)
     print(StateBin(2048).bin_variablise())
+    """
 
-
-# DONE: console interface;
+#
+# DONE: reimplement cmdln interface
+# console interface;
 # save > inventory
 # table, password <> save
 # DONE: File interface; print to table, mention input format in function name.
