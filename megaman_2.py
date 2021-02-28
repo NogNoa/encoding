@@ -100,7 +100,7 @@ class PentList:
         return NumList(back)
 
     def make_table(self, file='MM2pswd.csv'):
-        if file[:-4] != '.csv':
+        if file[-4:] != '.csv':
             file += '.csv'
         lexicon = {
             'A': [0, 0, 0, 0, 0],
@@ -215,7 +215,7 @@ def load_bin(file='mm2.sav'):
 
 
 def table_num_listise(file='MM2pswd.csv'):
-    if file[:-4] != '.csv':
+    if file[-4:] != '.csv':
         print('Please point me to a comma separated table')
         raise ValueError(file)
     call = open(file, 'r+')
@@ -246,7 +246,7 @@ if __name__ == "__main__":
             back = call.stt_numerise().num_pentise()
             if type_[0] == 't':
                 back.make_table(object_)
-                back = "You created table in " + str(object_.path)
+                back = "You created table in " + str(object_)
             elif type_[0] == 'p':
                 back = ' '.join(back.val)
             else:  # if all types have failed
@@ -256,26 +256,27 @@ if __name__ == "__main__":
 
     def bin_give(type_, object_=None, bin_=None):
         if type_[0] == 't':
-            call = table_num_listise(object_)
+            object_ = table_num_listise(object_)
         elif type_[0] == 'p':
-            call = PentList(object_)
-            call = call.pent_numerise()
+            object_ = PentList(object_)
+            object_ = object_.pent_numerise()
         else:  # inventory or something else invalid
             exit(4)
-        call.num_statify().stt_binarise().save(bin_)
+        object_.num_statify().stt_binarise().save(bin_)
         print("a gamestate was saved from your password")
 
 
     parser = argparse.ArgumentParser(description='you can only get inventory, it is useless to give it')
     actions = parser.add_mutually_exclusive_group()
-    actions.add_argument('-T', '--get', help='Get from me, the program, a type of object')
-    actions.add_argument('-V', '-v', '--give', help='Give to me, the program, a type of object, to save it to a file')
+    actions.add_argument('-T', '--get', help='Get from me, the program, a type of object', action="store_true")
+    actions.add_argument('-V', '-v', '--give', help='Give to me, the program, a type of object, to save it to a file',
+                         action="store_true")
     typs = parser.add_mutually_exclusive_group()
-    typs.add_argument('-t', '--table', help='')
-    typs.add_argument('-p', '-P', '--password', help='')
-    typs.add_argument('-i', '-I', '--inventory', help='')
-    parser.add_argument('object', help='path to table file or the password sepereted by hyphens.')
-    parser.add_argument('--save', help='the path to your target save file')
+    typs.add_argument('-t', '--table', help='', action="store_true")
+    typs.add_argument('-p', '-P', '--password', help='', action="store_true")
+    typs.add_argument('-i', '-I', '--inventory', help='', action="store_true")
+    parser.add_argument('-o', '--object', help='path to table file or the password sepereted by hyphens.', type=str)
+    parser.add_argument('-s', '--save', help='the path to your target save file', type=str)
     args = parser.parse_args()
 
     if args.table:
@@ -291,10 +292,12 @@ if __name__ == "__main__":
     if args.get:
         print(bin_get(type_=typ, object_=args.object, bin_=args.save))
     elif args.give:
-        bin.give(type_=typ, object_=args.object, bin_=args.save)
+        bin_give(type_=typ, object_=args.object, bin_=args.save)
     else:
         print('Something was wrong with the action you entered. Sorry')
         exit(1)
+
+
 
     """
     if args.action in get:
@@ -355,7 +358,7 @@ if __name__ == "__main__":
     print(StateBin(2048).bin_variablise())
     """
 
-#
+# TODO: got password: D5 B2 C3 C1 E2 B4 C5 D4 A5. Program itself claims it's invalid.
 # DONE: reimplement cmdln interface
 # console interface;
 # save > inventory
