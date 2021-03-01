@@ -84,8 +84,8 @@ class PentList:
     def __init__(self, table):
         # table string has to be 9 pent values with spaces!
         # it could be just a list
-        if type(table) is not list:
-            table: list = table.split('-')
+        if type(table) is str:
+            table = table.split(' ')
         self.val = table
 
     def __str__(self):
@@ -297,8 +297,6 @@ if __name__ == "__main__":
         print('Something was wrong with the action you entered. Sorry')
         exit(1)
 
-
-
     """
     if args.action in get:
         call = load_bin(args.save).bin_variablise()
@@ -358,12 +356,13 @@ if __name__ == "__main__":
     print(StateBin(2048).bin_variablise())
     """
 
-# TODO: got password: D5 B2 C3 C1 E2 B4 C5 D4 A5. Program itself claims it's invalid.
-# DONE: reimplement cmdln interface
-# console interface;
-# save > inventory
-# table, password <> save
-# DONE: File interface; print to table, mention input format in function name.
+# Td:
+# DONE: got password: D5 B2 C3 C1 E2 B4 C5 D4 A5. Program itself claims it's invalid.
+#       reimplement cmdln interface
+#       console interface;
+#       save > inventory
+#       table, password <> save
+#        File interface; print to table, mention input format in function name.
 # Boss_list = [Bubbleman, Airman, Quickman, Heatman, Woodman, Metalman, Flashman, Crashman]
 # Boss_Ante = ["C3", 'D2', 'C4', 'D5', 'B5', 'E1', 'E4', 'E2']  # pre-win values
 # Boss_Post = ['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']  # post-win values
