@@ -23,7 +23,7 @@ from sys import stderr
 
 def binarise(call):
     if type(call) == int:
-        call = bin(call)[2:]
+        call = format(call, 'b')
     """
     elif type(call) == str:
         for char in call:

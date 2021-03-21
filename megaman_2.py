@@ -124,6 +124,7 @@ class PentList:
                 # the bullet symbol • is U+2022
             line += '\n'
             back.write(line)
+        back.close()
 
 
 class StateBin:
@@ -149,9 +150,9 @@ class StateBin:
         return StateVar(bosses, etank)
 
     def save(self, file='mm2.sav'):
-        file = open(file, 'w+b')
         back = self.val.to_bytes(2, 'little')
-        file.write(back)
+        with open(file, 'w+b') as file:
+            file.write(back)
 
 
 class StateVar:
@@ -171,7 +172,7 @@ class StateVar:
                 return ' '
 
         b = self.bossi
-        back = 'P' + mask('B', b[0]) + mask('A', b[1]) + mask('Q', b[2])
+        back =              'P'        + mask('B', b[0]) + mask('A', b[1]) + mask('Q', b[2])
         back += '\n' + mask('H', b[3]) + mask('W', b[4]) + mask('M', b[5]) + mask('F', b[6])
         back += '\n' + mask('C', b[7]) + mask('1', b[3]) + mask('2', b[1]) + mask('3', b[6])
         return back
@@ -208,8 +209,7 @@ class StateVar:
 # file loading functions
 
 def load_bin(file='mm2.sav'):
-    call = open(file, 'r+b')
-    call = call.read()
+    call = open(file, 'r+b').read()
     back = int.from_bytes(call, 'little')
     return StateBin(back)
 
@@ -218,8 +218,7 @@ def table_num_listise(file='MM2pswd.csv'):
     if file[-4:] != '.csv':
         print('Please point me to a comma separated table')
         raise ValueError(file)
-    call = open(file, 'r+')
-    call = call.readlines()
+    call = open(file, 'r+').readlines()
     call = [pl.split(',') for pl in call]
     """
     for i in call:
@@ -275,7 +274,7 @@ if __name__ == "__main__":
     typs.add_argument('-t', '--table', help='', action="store_true")
     typs.add_argument('-p', '-P', '--password', help='', action="store_true")
     typs.add_argument('-i', '-I', '--inventory', help='', action="store_true")
-    parser.add_argument('-o', '--object', help='path to table file or the password sepereted by hyphens.', type=str)
+    parser.add_argument('-o', '--object', help='path to table file or the password sepereted by spaces.', type=str)
     parser.add_argument('-s', '--save', help='the path to your target save file', type=str)
     args = parser.parse_args()
 

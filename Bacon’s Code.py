@@ -55,8 +55,7 @@ class Ordinal:
         return Letter(order[self.val])
 
     def abbinise(self):
-        bn = bin(self.val)
-        strbin = str(bn)[2:]  # remove 0b prefix
+        strbin = format(self.val, 'b')  # sans 0b prefix
         strab = ''
         for b in strbin:
             if b == '0':
@@ -135,13 +134,15 @@ def listise(message: str):
     back = []
     while message:
         letter_index = -1
-        for c in enumerate(message):
-            char = c[1]
+        for pl, val in enumerate(message):
+            char = val
             if char in ascii_letters:
                 letter_index += 1
                 if letter_index >= 4:
+                    char_index = pl + 1
                     break
-        char_index = c[0] + 1
+        else:
+            char_index = len(message)
         back.append(message[:char_index])
         message = message[char_index:]
     return back
@@ -298,3 +299,5 @@ if __name__ == "__main__":
 
     joe = bacon('Tolkien', lock)
     Jay = decipher(joe)
+
+#  maybe rewrite listise?
