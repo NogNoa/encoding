@@ -258,32 +258,32 @@ def bacon_file(true, key, false='false-message.txt'):
     true = load_file(true)
     key = load_file(key)
     back = TrueMessage(true).list_abbinise().falsify(key)
-    save_file(false, back)
+    save_file(false, str(back))
     return back
 
 
 def decipher_file(false, true='true-message.txt'):
     false = load_file(false)
     back = FalseMessage(false).list_abbinise().textualise()
-    save_file(true, back)
+    save_file(true, str(back))
     return back
 
 
 if __name__ == "__main__":
     """
-    Joe = letter('J')
+    Joe = Letter('J')
     print(Joe.val)
     print(Joe.ordinise().val)
-    print(ordinal(4).letterise().val)
+    print(Ordinal(4).letterise().val)
     Joe = Joe.abbinise()
     print(Joe.val)
     print(Joe.letterise().val)
-    print(Joe.falsify('Letsgo'))
-    
+    print(Joe.falsify('Letsg'))
+
     jack = ''
-    
+
     for l in "Tolkien":
-        l = letter(l)
+        l = Letter(l)
         l = l.abbinise()
         jack += l.val + ' '
     print(jack)
@@ -299,5 +299,10 @@ if __name__ == "__main__":
 
     joe = bacon('Tolkien', lock)
     Jay = decipher(joe)
+    bacon_file("README.md", "english.txt")
+    decipher_file('false-message.txt')
 
 #  maybe rewrite listise?
+#
+#  Done: is it okey to silently accept too long key_packets? Not really. If a packet longer than 5 got there, something
+#  weird've happened.

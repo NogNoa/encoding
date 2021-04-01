@@ -2,6 +2,7 @@
 .idea/
 venv/
 *.csv
+*.txt
 mm2.sav
 goblin*
 bacon code.tgf
