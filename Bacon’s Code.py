@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from string import ascii_lowercase, ascii_uppercase, ascii_letters
+
 """
 Created on Sat Aug 31 19:47:07 2019
 @author: omer Navon
@@ -12,8 +15,6 @@ Instead of 0 and 1 he used ‘a’ and ‘b’ but this was only for discussing 
 The actual encoding was done by a pair of fonts.
 And than a false messege was written in them to encode the real messege (which was obviously 5 times shorter)
 """
-
-from string import ascii_lowercase, ascii_uppercase, ascii_letters
 
 order = ascii_lowercase.replace('j', '').replace('v', '')
 
@@ -54,8 +55,7 @@ class Ordinal:
         return Letter(order[self.val])
 
     def abbinise(self):
-        bn = bin(self.val)
-        strbin = str(bn)[2:]  # remove 0b prefix
+        strbin = format(self.val, 'b')  # sans 0b prefix
         strab = ''
         for b in strbin:
             if b == '0':
@@ -119,10 +119,10 @@ class FalsePacket:
 
     def abbinise(self):
         back = ''
-        for l in self.val:
-            if l in ascii_lowercase:
+        for ltr in self.val:
+            if ltr in ascii_lowercase:
                 back += 'a'
-            elif l in ascii_uppercase:
+            elif ltr in ascii_uppercase:
                 back += 'b'
         return abBin(back)
 
@@ -134,13 +134,15 @@ def listise(message: str):
     back = []
     while message:
         letter_index = -1
-        for c in enumerate(message):
-            char = c[1]
+        for pl, val in enumerate(message):
+            char = val
             if char in ascii_letters:
                 letter_index += 1
                 if letter_index >= 4:
+                    char_index = pl + 1
                     break
-        char_index = c[0] + 1
+        else:
+            char_index = len(message)
         back.append(message[:char_index])
         message = message[char_index:]
     return back
@@ -157,10 +159,10 @@ class TrueMessage:
 
     def list_abbinise(self):
         back = []
-        for l in self.val:
-            if l in ascii_letters:
-                l = Letter(l).abbinise()
-                back.append(l)
+        for ltr in self.val:
+            if ltr in ascii_letters:
+                ltr = Letter(ltr).abbinise()
+                back.append(ltr)
         return abBinList(back)
 
 
@@ -176,9 +178,9 @@ class abBinList:
 
     def textualise(self):
         back = ''
-        for l in self.val:
-            l = l.letterise()
-            back += l.val
+        for abbin in self.val:
+            abbin = abbin.letterise()
+            back += abbin.val
         return TrueMessage(back)
 
     def expose(self):
@@ -190,10 +192,9 @@ class abBinList:
     def falsify(self, key_message: str):
         back = ''
         key_list = listise(key_message)
-        for i in enumerate(self.val):
-            l = i[1]
-            key_packet = key_list[i[0]]
-            back += l.falsify(key_packet).val
+        for pl, abbin in enumerate(self.val):
+            key_packet = key_list[pl]
+            back += abbin.falsify(key_packet).val
         return FalseMessage(back)
 
 
@@ -257,32 +258,32 @@ def bacon_file(true, key, false='false-message.txt'):
     true = load_file(true)
     key = load_file(key)
     back = TrueMessage(true).list_abbinise().falsify(key)
-    save_file(false, back)
+    save_file(false, str(back))
     return back
 
 
 def decipher_file(false, true='true-message.txt'):
     false = load_file(false)
     back = FalseMessage(false).list_abbinise().textualise()
-    save_file(true, back)
+    save_file(true, str(back))
     return back
 
 
 if __name__ == "__main__":
     """
-    Joe = letter('J')
+    Joe = Letter('J')
     print(Joe.val)
     print(Joe.ordinise().val)
-    print(ordinal(4).letterise().val)
+    print(Ordinal(4).letterise().val)
     Joe = Joe.abbinise()
     print(Joe.val)
     print(Joe.letterise().val)
-    print(Joe.falsify('Letsgo'))
-    
+    print(Joe.falsify('Letsg'))
+
     jack = ''
-    
+
     for l in "Tolkien":
-        l = letter(l)
+        l = Letter(l)
         l = l.abbinise()
         jack += l.val + ' '
     print(jack)
@@ -298,3 +299,10 @@ if __name__ == "__main__":
 
     joe = bacon('Tolkien', lock)
     Jay = decipher(joe)
+    bacon_file("README.md", "english.txt")
+    decipher_file('false-message.txt')
+
+#  maybe rewrite listise?
+#
+#  Done: is it okey to silently accept too long key_packets? Not really. If a packet longer than 5 got there, something
+#  weird've happened.
