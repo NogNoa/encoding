@@ -1,6 +1,5 @@
 # Default ignored files
 .idea/
-.idea\
 __pycache__/
 venv/
 *.csv
@@ -8,4 +7,4 @@ venv/
 mm2.sav
 goblin*
 bacon code.tgf
-__pycache__/
+
