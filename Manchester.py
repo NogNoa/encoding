@@ -47,23 +47,20 @@ class Data:
         if call is None:
             self.val = ''
         else:
-            self.val = call
+            self.val = binarise(call)
 
     def tick(self, clock):
-        bn_val = binarise(self.val)
         try:
-            back = bn_val[-1]
+            back = self.val[-1]
             back = int(back)
         except IndexError:
             back = None
         if not clock.val:
-            bn_val = bn_val[:-1]  # delete last char every time clock is 0
-            self.val = int('0b' + bn_val)
+            self.val = self.val[:-1]  # delete last char every time clock is 0
         return back
 
     def append(self, call):
-        back = binarise(call) + binarise(self.val)
-        self.val = int('0b' + back)
+        self.val = binarise(call) + self.val
 
 
 class Transmitter:
