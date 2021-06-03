@@ -23,6 +23,12 @@ class Data:
         else:
             self.val = binarise(call)
 
+    def __str__(self):
+        return self.val
+
+    def __int__(self):
+        return int('0b' + self.val)
+
     def tick(self, clock):
         try:
             back = self.val[-1]
@@ -35,20 +41,29 @@ class Data:
 
 
 class Fifo(Data):
-
     def append(self, call):
         self.val = binarise(call) + self.val
 
 
-class stack(Data):
+class Stack(Data):
     def append(self, call):
         self.val += binarise(call)
+
+
+airwaves = Fifo()
 
 
 class Reciever:
     def __init__(self):
         self.clock = Clock()
         self.synched = False
+        self.stack = Stack()
+
+    def tick(self):
+        self.clock.tick()
+        signal = airwaves.val[0]
+        if signal is not None:
+            self.stack.append(signal)
 
     def loop(self):
         while True:
