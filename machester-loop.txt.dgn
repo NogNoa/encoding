@@ -1,0 +1,13 @@
+reciever put bits in a stack. 
+while not 1 in stack:
+	keep the stack always a single 0.
+else:  # 1 in stack
+	if last 4 bits are either of a 0110 or 1001 subsegment:
+		interpret them as 01 or 10 accordingly.
+		interpret backward every bit couple.
+		if there is only zeros now
+			good make it only a single 0
+		else:
+			there is an error
+	else:
+		do nothing (keep puting bits in)

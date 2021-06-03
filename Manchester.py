@@ -22,15 +22,7 @@ from sys import stderr
 
 
 def binarise(call):
-    if type(call) == int:
-        call = format(call, 'b')
-    """
-    elif type(call) == str:
-        for char in call:
-            if char != '0' and char != '1':
-                call.replace(char, '')
-    """
-    return call
+    return format(call, 'b')
 
 
 class Clock:
@@ -45,6 +37,9 @@ class Clock:
             return "Tick"
         else:
             return "Tock"
+
+    def __repr__(self):
+        return self.val
 
 
 class Data:
@@ -132,4 +127,4 @@ if __name__ == "__main__":
 
 #
 # Done: get data in transmitter
-# change -1 to 00 and make receiver being able to interpret 0000 as end of transmision.
+# change -1 to 00 and make receiver being able to interpret 0000 as end of transmission.
