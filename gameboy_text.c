@@ -35,6 +35,8 @@ text.write(back)
 # */
 // """
 
+char * file_stringise(char * filename);
+
 int main(int argc, char *argv[])
 {
     #define HIGH 0b1000000
@@ -44,23 +46,27 @@ int main(int argc, char *argv[])
                       '¡','=','¿','?','Ä','A','B','C','D','E','F','G','H','I',
                       'J','K','L','M','N','O','P','Q','R','S','T','U','V','W',
                       'X','Y','Z','Ö','Ü','À','È','Ì'};
-    char * call = file_stringise(argv[1], "rb");
+    char * call = file_stringise(argv[1]);
 
     for (int i=0;call[i] != 0;++i){
-        char c =call[i];
+        int c =call[i];
         c -= 0x20;
-        white = (c / HIGH);
+        char white = (c / HIGH);
         c %= HIGH;
         c = table[c];
         switch(white){
-            case 0: white = '';break;
+            case 0: white = '\a';break; //empty charecter
             case 1: white = '\n';break;
             case 2: white = ' ';break;
             case 3: white = '|';break;
-            default: printf("\nerror: %x %x\n",h,c) 
+            default: printf("\nerror: %x %x\n",white,c);
         }
         putchar(c);putchar(white);
     }
 }
 
+// todo: learn about wide charecters in c.
+
 // """
+
+
