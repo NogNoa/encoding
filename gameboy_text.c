@@ -1,7 +1,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 
-# 
+# /*
 
 parser = argparse.ArgumentParser()
 parser.add_argument('bin')
@@ -32,21 +32,35 @@ print(back)
 text = open('args.text', 'w+')
 text.write(back)
 
-# 
+# */
 // """
 
 int main(int argc, char *argv[])
 {
-    char *bin = argv[1]
+    #define HIGH 0b1000000
 
     char table[66] = {' ','!','"','Ñ','$','C','&','\'','®','®','©','+',',','-',
                       '.','/','0','1','2','3','4','5','6','7','8','9',':','Ù',
                       '¡','=','¿','?','Ä','A','B','C','D','E','F','G','H','I',
                       'J','K','L','M','N','O','P','Q','R','S','T','U','V','W',
                       'X','Y','Z','Ö','Ü','À','È','Ì'};
-    FILE * call = fopen (bin, "rb");
+    char * call = file_stringise(argv[1], "rb");
 
-    for 
+    for (int i=0;call[i] != 0;++i){
+        char c =call[i];
+        c -= 0x20;
+        white = (c / HIGH);
+        c %= HIGH;
+        c = table[c];
+        switch(white){
+            case 0: white = '';break;
+            case 1: white = '\n';break;
+            case 2: white = ' ';break;
+            case 3: white = '|';break;
+            default: printf("\nerror: %x %x\n",h,c) 
+        }
+        putchar(c);putchar(white);
+    }
 }
 
 // """
