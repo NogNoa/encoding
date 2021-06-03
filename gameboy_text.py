@@ -1,19 +1,20 @@
+#!/usr/bin/env python3
+
 import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('bin')
-parser.add_argument('text')
+parser.add_argument('--text')
 args = parser.parse_args()
 table = ' !"Ñ$C&\'®®©+,-./0123456789:Ù¡=¿?ÄABCDEFGHIJKLMNOPQRSTUVWXYZÖÜÀÈÌ'
-# call = open(args.bin, 'rb')
-call = open("D:\\temp\\patching teach\\Gargoyle's Quest - Text Restoration.ips", 'rb')
+call = open(args.bin, 'rb')
+# call = open("D:\\Games\\mGBA-0.6.3-win32\\rom\\Operation C (U) [!].gb", 'rb')
 back = ''
 while call:
     h = call.read(1)
-    h = int(h) - 0x20
+    h = int.from_bytes(h, "little") - 0x20
     char = h % 0b1000000
     char = table[char]
-    char = str(char)
     white = (h // 0b1000000) % 0b100
     if white == 0:
         white = ''
