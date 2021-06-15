@@ -41,30 +41,34 @@ int main(int argc, char *argv[])
 {
     #define HIGH 0b1000000
 
-    char table[66] = {' ','!','"','Ñ','$','C','&','\'','®','®','©','+',',','-','.','/', /* 0x */
-                      '0','1','2','3','4','5','6','7' ,'8','9',':','Ù','¡','=','¿','?', /* 1x */
-                      'Ä','A','B','C','D','E','F','G' ,'H','I','J','K','L','M','N','O', /* 2x */ 
-                      'P','Q','R','S','T','U','V','W' ,'X','Y','Z','Ö','Ü','À','È','Ì'};/* 3x */
+    wchar_t table[66] = {' ','!','"',L'Ñ','$','C','&','\'',L'®',L'®',L'©', '+', ',', '-', '.', '/', /* 0x */
+                         '0','1','2', '3','4','5','6','7' , '8', '9', ':',L'Ù',L'¡', '=',L'¿', '?', /* 1x */
+                        L'Ä','A','B', 'C','D','E','F','G' , 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', /* 2x */ 
+                         'P','Q','R','S','T','U','V' ,'W' , 'X', 'Y', 'Z',L'Ö',L'Ü',L'À',L'È',L'Ì'};/* 3x */
     char * call = file_stringise(argv[1]);
 
     for (int i=0;call[i] != 0;++i){
-        int c =call[i];
+        char c =call[i];
         c -= 0x20;
         char white = (c / HIGH);
         c %= HIGH;
-        c = table[c];
+        if (c<0x40)
+            c = table[c];
+        else
+        {   printf("\nCharError: %x %x\n", white,c);
+            continue;
+        }
         switch(white){
             case 0: white = '\a';break; //empty charecter
             case 1: white = '\n';break;
             case 2: white = ' ';break;
             case 3: white = '|';break;
-            default: printf("\nerror: %x %x\n",white,c);
+            default: printf("\nWhiteError: %x %x\n",white,c);
         }
         putchar(c);putchar(white);
     }
+    putchar('\n');
 }
-
-// todo: learn about wide charecters in c.
 
 // """
 
