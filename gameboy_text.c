@@ -2,6 +2,7 @@
 # include <stdlib.h>
 
 # /*
+import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('bin')
@@ -32,19 +33,19 @@ print(back)
 text = open('args.text', 'w+')
 text.write(back)
 
-# */
-// """
 
+"""
+*/
 char * file_stringise(char * filename);
 
 int main(int argc, char *argv[])
 {
-    #define HIGH 0b1000000
+    #define HIGH 0x40
 
     wchar_t table[66] = {' ','!','"',L'Ñ','$','C','&','\'',L'®',L'®',L'©', '+', ',', '-', '.', '/', /* 0x */
                          '0','1','2', '3','4','5','6','7' , '8', '9', ':',L'Ù',L'¡', '=',L'¿', '?', /* 1x */
                         L'Ä','A','B', 'C','D','E','F','G' , 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', /* 2x */ 
-                         'P','Q','R','S','T','U','V' ,'W' , 'X', 'Y', 'Z',L'Ö',L'Ü',L'À',L'È',L'Ì'};/* 3x */
+                         'P','Q','R', 'S','T','U','V','W' , 'X', 'Y', 'Z',L'Ö',L'Ü',L'À',L'È',L'Ì'};/* 3x */
     char * call = file_stringise(argv[1]);
 
     for (int i=0;call[i] != 0;++i){
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
         c -= 0x20;
         char white = (c / HIGH);
         c %= HIGH;
-        if (c<0x40)
+        if (c<HIGH)
             c = table[c];
         else
         {   printf("\nCharError: %x %x\n", white,c);

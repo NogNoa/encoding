@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
-
 import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('bin')
 parser.add_argument('--text')
 args = parser.parse_args()
-table = ' !"Ñ$C&\'®®©+,-./0123456789:Ù¡=¿?ÄABCDEFGHIJKLMNOPQRSTUVWXYZÖÜÀÈÌ'
 call = open(args.bin, 'rb')
 # call = open("D:\\Games\\mGBA-0.6.3-win32\\rom\\Operation C (U) [!].gb", 'rb')
+# call = open("hello_world.gb", 'rb')
+table = ' !"Ñ$C&\'®®©+,-./0123456789:Ù¡=¿?ÄABCDEFGHIJKLMNOPQRSTUVWXYZÖÜÀÈÌ'
+
 back = ''
-while call:
-    h = call.read(1)
-    h = int.from_bytes(h, "little") - 0x20
-    char = h % 0b1000000
+call = call.read()
+for h in call:
+    h -= 0x20
+    char = h % 0x40
     char = table[char]
-    white = (h // 0b1000000) % 0b100
+    white = (h // 0x40) % 0x4
     if white == 0:
         white = ''
     elif white == 1:
@@ -26,7 +27,6 @@ while call:
         white = '||'
     else:
         print('error:', char)
-    back += char + white
-print(back)
-text = open('args.text', 'w+')
-text.write(back)
+    print(char, end=white)
+#text = open('args.text', 'w+')
+#text.write(back)
