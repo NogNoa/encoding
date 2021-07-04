@@ -41,22 +41,25 @@ char * file_stringise(char * filename);
 int main(int argc, char *argv[])
 {
     #define HIGH 0x40
+    char c,white;
+    char i=0,og;
 
-    wchar_t table[66] = {' ','!','"',L'Ñ','$','C','&','\'',L'®',L'®',L'©', '+', ',', '-', '.', '/', /* 0x */
+    wchar_t table[ ]  = {' ','!','"',L'Ñ','$','C','&','\'',L'®',L'®',L'©', '+', ',', '-', '.', '/', /* 0x */
                          '0','1','2', '3','4','5','6','7' , '8', '9', ':',L'Ù',L'¡', '=',L'¿', '?', /* 1x */
                         L'Ä','A','B', 'C','D','E','F','G' , 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', /* 2x */ 
                          'P','Q','R', 'S','T','U','V','W' , 'X', 'Y', 'Z',L'Ö',L'Ü',L'À',L'È',L'Ì'};/* 3x */
-    char * call = file_stringise(argv[1]);
+    
+    FILE* scroll = fopen(argv[1], "r");
 
-    for (int i=0;call[i] != 0;++i){
-        char c =call[i];
+    while ((og = c = fgetc(scroll)) != EOF)
+    {   i++;
         c -= 0x20;
-        char white = (c / HIGH);
+        white = (c / HIGH);
         c %= HIGH;
         if (c<HIGH)
             c = table[c];
         else
-        {   printf("\nCharError: %x %x\n", white,c);
+        {   printf("\nCharError: %x at %x\n", og,i);
             continue;
         }
         switch(white){
@@ -64,11 +67,12 @@ int main(int argc, char *argv[])
             case 1: white = '\n';break;
             case 2: white = ' ';break;
             case 3: white = '|';break;
-            default: printf("\nWhiteError: %x %x\n",white,c);
+            default: printf("\nWhiteError: %x at %x\n",og,i);
         }
         putchar(c);putchar(white);
     }
     putchar('\n');
+    fclose(scroll);
 }
 
 // """

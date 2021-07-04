@@ -4,6 +4,8 @@ __pycache__/
 venv/
 *.csv
 *.txt
+*.ips
+*.gb
 mm2.sav
 goblin*
 bacon code.tgf
