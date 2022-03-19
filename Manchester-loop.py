@@ -4,7 +4,7 @@ def binarise(call):
 
 class Clock:
     def __init__(self):
-        self.val = 0
+        self.val = False
 
     def tick(self):
         self.val = not self.val
@@ -31,26 +31,40 @@ class Data:
 
     def tick(self, clock):
         try:
-            back = self.val[-1]
-            back = int(back)
+            back = int(self.val[-1])
         except IndexError:
-            back = None
+            back = False
         if not clock.val:
             self.val = self.val[:-1]  # delete last char every time clock is 0
         return back
 
 
 class Fifo(Data):
-    def append(self, call):
+    def push(self, call):
         self.val = binarise(call) + self.val
 
 
 class Stack(Data):
-    def append(self, call):
+    def push(self, call):
         self.val += binarise(call)
 
 
-airwaves = Fifo()
+class Airwaves:
+    def __init__(self):
+        self.clock = Clock()
+        self.val = False
+        self.fifo = Fifo()
+
+    def push(self, call):
+        self.fifo.push(call)
+
+    def tick(self, ):
+        self.clock.tick()
+        bit = self.fifo.tick(self.clock)
+        self.val = bit if bit is not None else False
+
+
+airwaves = Airwaves()
 
 
 class Reciever:
@@ -61,9 +75,9 @@ class Reciever:
 
     def tick(self):
         self.clock.tick()
-        signal = airwaves.val[0]
+        signal = airwaves.val
         if signal is not None:
-            self.stack.append(signal)
+            self.stack.push(signal)
 
     def loop(self):
         while True:

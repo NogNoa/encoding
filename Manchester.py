@@ -1,5 +1,5 @@
 """
-Manchester takes a regular bits stream and convert it to a specilied bits stream with double the length
+Manchester takes a regular bits stream and convert it to a specilied bits stream with double the length.
 
 Manchester should give back:
 
