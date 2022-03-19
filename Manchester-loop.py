@@ -10,11 +10,7 @@ class Clock:
         self.val = not self.val
 
     def __str__(self):
-        if self.val:
-            return "Tick"
-        else:
-            return "Tock"
-
+        return ("Tock", "Tick")[self.val]
 
 class Data:
     def __init__(self, call: int = None):
@@ -29,12 +25,12 @@ class Data:
     def __int__(self):
         return int('0b' + self.val)
 
-    def tick(self, clock):
+    def tick(self, clock_val):
         try:
             back = int(self.val[-1])
         except IndexError:
             back = False
-        if not clock.val:
+        if not clock_val:
             self.val = self.val[:-1]  # delete last char every time clock is 0
         return back
 
@@ -60,8 +56,7 @@ class Airwaves:
 
     def tick(self, ):
         self.clock.tick()
-        bit = self.fifo.tick(self.clock)
-        self.val = bit if bit is not None else False
+        self.val = self.fifo.tick(self.clock.val)
 
 
 airwaves = Airwaves()
@@ -75,9 +70,7 @@ class Reciever:
 
     def tick(self):
         self.clock.tick()
-        signal = airwaves.val
-        if signal is not None:
-            self.stack.push(signal)
+        self.stack.push(airwaves.val)
 
     def loop(self):
         while True:
