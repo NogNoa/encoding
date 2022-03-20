@@ -71,7 +71,8 @@ class Reciever:
 
     def tick(self):
         self.clock.tick()
-        self.stack.push(airwaves.val)
+        if self.clock.val:
+            self.stack.push(airwaves.val)
 
     def loop(self):
         while True:
@@ -86,3 +87,11 @@ class Reciever:
     def improv(self):
         # feat.sleep
         pass
+
+
+rec = Reciever()
+
+
+def tick():
+    airwaves.tick()
+    rec.tick()
