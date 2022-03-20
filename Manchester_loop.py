@@ -26,7 +26,7 @@ class Data:
     def __int__(self):
         return int('0b' + self.val)
 
-    def tick(self, clock_val):
+    def pull(self, clock_val):
         try:
             back = int(self.val[-1])
         except IndexError:
@@ -57,7 +57,7 @@ class Airwaves:
 
     def tick(self):
         self.clock.tick()
-        self.val = self.fifo.tick(self.clock.val)
+        self.val = self.fifo.pull(self.clock.val)
 
 
 airwaves = Airwaves()
@@ -72,7 +72,10 @@ class Reciever:
     def tick(self):
         self.clock.tick()
         if self.clock.val:
-            self.stack.push(airwaves.val)
+            self.recieve()
+
+    def recieve(self):
+        self.stack.push(airwaves.val)
 
     def loop(self):
         while True:
@@ -89,9 +92,26 @@ class Reciever:
         pass
 
 
-rec = Reciever()
+class Transmitter:
+    def __init__(self):
+        self.clock = Clock()
+        self.fifo = Fifo()
 
+    def set(self, msg: int):
+        self.fifo.push(msg)
+
+    def tick(self):
+        self.clock.tick()
+        self.transmit()
+
+    def transmit(self):
+        airwaves.push(self.fifo.pull)
+
+
+rec = Reciever()
+trans = Transmitter()
 
 def tick():
     airwaves.tick()
     rec.tick()
+    trans.tick()
