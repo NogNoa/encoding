@@ -26,14 +26,15 @@ class Data:
     def __int__(self):
         return int('0b' + self.val)
 
-    def pull(self, clock_val):
+    def show(self):
         try:
-            back = int(self.val[-1])
+            return int(self.val[-1])
         except IndexError:
-            back = False
+            return False
+
+    def tick(self, clock_val):
         if not clock_val:
             self.val = self.val[:-1]  # delete last char every time clock is 0
-        return back
 
 
 class Fifo(Data):
@@ -57,7 +58,8 @@ class Airwaves:
 
     def tick(self):
         self.clock.tick()
-        self.val = self.fifo.pull(self.clock.val)
+        self.fifo.tick(self.clock.val)
+        self.val = self.fifo.show()
 
 
 airwaves = Airwaves()
@@ -71,6 +73,7 @@ class Reciever:
 
     def tick(self):
         self.clock.tick()
+        self.stack.tick(self.clock.val)
         if self.clock.val:
             self.recieve()
 
@@ -102,16 +105,21 @@ class Transmitter:
 
     def tick(self):
         self.clock.tick()
+        self.fifo.tick(self.clock.val)
         self.transmit()
 
     def transmit(self):
-        airwaves.push(self.fifo.pull)
+        if self.fifo.val:
+            airwaves.push(self.fifo.show())
 
 
 rec = Reciever()
 trans = Transmitter()
+attori = [airwaves, rec, trans]
+
 
 def tick():
-    airwaves.tick()
-    rec.tick()
-    trans.tick()
+    from random import shuffle
+    shuffle(attori)
+    for attore in attori:
+        attore.tick()
