@@ -12,6 +12,7 @@ class Clock:
     def __str__(self):
         return ("Tock", "Tick")[self.val]
 
+
 class Data:
     def __init__(self, call: int = None):
         if call is None:
@@ -54,7 +55,7 @@ class Airwaves:
     def push(self, call):
         self.fifo.push(call)
 
-    def tick(self, ):
+    def tick(self):
         self.clock.tick()
         self.val = self.fifo.tick(self.clock.val)
 
