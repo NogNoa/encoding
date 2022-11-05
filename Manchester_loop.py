@@ -34,7 +34,10 @@ class Data:
 
     def tick(self, clock_val):
         if not clock_val:
-            self.val = self.val[:-1]  # delete last char every time clock is 0
+            try:
+                self.val = self.val[:-1]  # delete last char every time clock is 0
+            except IndexError:
+                pass
 
 
 class Fifo(Data):
