@@ -190,7 +190,7 @@ class StateVar:
             else:
                 boss = boss_ante[i]
             boss = boss + self.etank
-            # if we reach E5 which is 24 (4*5 +5 -1) the next should be B1 = 5 (1*5 + 1 - 1)
+            # if we reach E5, which is 24 (4*5 +5 -1) the next should be B1 = 5 (1*5 + 1 - 1)
             # instead of 25. So 20 less. The A row is actually kept for the Etanks count itself.
             boss -= 20 * (boss > 24)
             pswd += [boss]
@@ -285,8 +285,9 @@ if __name__ == "__main__":
     elif args.inventory:
         typ = ('i', args.inventory)
     else:  # if all types have failed
-        back = 'Something was wrong with the type you entered. Sorry'
+        print('Something was wrong with the type you entered. Sorry')
         exit(2)
+        typ = None
 
     if args.get:
         print(bin_get(type_=typ, object_=args.object, bin_=args.save))
