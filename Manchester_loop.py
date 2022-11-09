@@ -1,10 +1,13 @@
+import random
+
+
 def binarise(call):
     return format(call, 'b')
 
 
 class Clock:
     def __init__(self):
-        self.val = False
+        self.val = round(random.random())
 
     def tick(self):
         self.val = not self.val
@@ -122,7 +125,6 @@ attori = [airwaves, rec, trans]
 
 
 def tick():
-    from random import shuffle
-    shuffle(attori)
+    random.shuffle(attori)
     for attore in attori:
         attore.tick()
