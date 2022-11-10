@@ -35,7 +35,26 @@ Sencii = [" ", "[Blank1]", "[Blank2]", "[Blank3]", "[Sword]", "[light_sword]", "
 
 with open("D:/temp/patching teach/radia100/radia100.ips", mode="rb") as file:
     scroll = file.read()
-codex = [Sencii[b] for b in scroll]
+state = "head"
+length = 0
+while scroll:
+    if state == "head":
+        if scroll[:5] == b'PATCH':
+            del scroll[:5]
+            state = "body"
+        else:
+            raise IOError
+    if state == "body":
+        if scroll[:3] == b"EOF":
+            break
+        elif scroll[:2] == b'\u0\u0':
+            raise ZeroDivisionError
+        else:
+            length = scroll[0] * 0x100 + scroll[1]
+            del scroll[:2]
+            state = payload
+
+codex = [Sencii[b] for b in scroll if (b == 0 or 0x12 <= b <= 0x9A)]
 codex = ''.join(codex)
 with open("D:/temp/patching teach/radia100/radia100-transcript.txt", mode="w+") as file:
     file.write(codex)
