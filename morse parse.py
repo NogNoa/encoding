@@ -35,19 +35,22 @@ Latin = {
         '-': {' ': 'o'}}
 }}
 
-def tree_build(d: dict[str, str]):
+def tree_build(d: dict[str, str] | str):
     # take dict from char to morse
-    # return tree from morse to char
+    # returns a tree from morse to char
     if not d or isinstance(d, str):
+        # empty dicts and the original keys are the leaves
         return d
     
     back = {'.': {}, '-': {}}
     for key,val in d.items():
         if not len(val):
+            # the SP branch if it exist is a key leaf
             back[' '] = key
         else:
+            # collect the items to a . branch and - branch
             back[val[0]][key] = val[1:]
-    
+    # construct the . and - branches. the SP branch returns immedietly
     return {m: tree_build(val) for m, val in back.items()}
 
 def BinToMorse(binary):
@@ -87,11 +90,11 @@ def MorseToBinary(morse):
             binary += '00'
     return binary
 
-def MorseToLatin(morse):
+def MorseToLatin(morse, tree=Latin):
     latin = ''
     morse += ' '
     while morse:
-        c = Latin
+        c = tree
         while not isinstance(c, str):
             c = c[morse[0]]
             morse =  morse[1:]
