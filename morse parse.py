@@ -41,7 +41,7 @@ def tree_build(d: dict[str, str] | str):
     if isinstance(d, str):
         # the original keys are the leaves
         return d
-    
+
     back = {'.': {}, '-': {}}
     for key,val in d.items():
         if not len(val):
@@ -53,9 +53,13 @@ def tree_build(d: dict[str, str] | str):
     # construct the . and - branches. the SP branch returns immedietly
     return {m: tree_build(val) for m, val in back.items() if val}
 
-def tree_extend(tree: dict | str, d: dict[str, str] | str):
-    if not d or isinstance(tree, str) or isinstance(d, str):
+def tree_extend(tree: dict | str, d: dict[str, str] | str, overwrite: bool = False):
+    if not d:
         return tree
+    elif not tree:
+        return tree_build(d)
+    elif isinstance(d, str) or isinstance(tree, str):
+        return tree_build(d) if overwrite else tree
 
 
     back = {' ': {}, '.': {}, '-': {}}
@@ -69,10 +73,10 @@ def tree_extend(tree: dict | str, d: dict[str, str] | str):
     for m in ' .-':
         try:
             tree[m]
-        except KeyError:
+        except (KeyError):
             back[m] = tree_build(back[m])
         else:
-            back[m] = tree_extend(tree[m], back[m])
+            back[m] = tree_extend(tree[m], back[m], overwrite)
     return {m: val for m, val in back.items() if val}
 
 
