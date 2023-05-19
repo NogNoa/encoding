@@ -35,14 +35,14 @@ Latin = {
         '-': {' ': 'o'}}
 }}
 
-def tree_build(d: dict[str, str])
+def tree_build(d: dict[str, str]):
     # take dict from char to morse
     # return tree from morse to char
-    return {m: tree_build(
-        {' ': key for key,val in d if not len(val) else
-        key: val[1:] if val[0] == m}
-        )
-     for m in ".-"}
+    return {m: {
+        ' ': key if val == m else 
+        tree_build({key: val[1:] if val[0] == m})
+        for key,val in d}
+    for m in ".-"}
     
 
 
@@ -101,4 +101,5 @@ if __name__ == '__main__':
     # print(bin(137))
 
     print(MorseToLatin('... --- ...'))
+    print(tree_build({"a": "-.", "b": "-...", "c": "-.-."}))
     input()
