@@ -5,6 +5,36 @@ Created on Sat Apr 25 07:50:08 2020
 @author: omer
 """
 
+Latin = {
+'.': {
+    ' ': 'e',
+    '.': {
+        ' ':'i',
+        '.': {
+            ' ': 's', '.':{' ': 'h'}, '-': {' ': 'v'}},
+        '-': {
+            ' ': 'u', '.': {' ': 'f'}}},
+    '-': {
+        ' ': 'a',
+        '.': {
+            ' ': 'r', '.': {' ': 'l'}},
+        '-': {
+            ' ': 'w', '.': {' ': 'p',}, '-': {' ': 'j'}}}},
+'-': {
+    ' ': 't',
+    '.': {
+        ' ': 'n',
+        '.': {
+            ' ': 'd', '.': {' ':'b'}, '-': {' ': 'x'}},
+        '-': {
+            ' ': 'k', '.': {' ': 'c'}, '-': {' ': 'y'}}},
+    '-': {
+        ' ': 'm',
+        '.': {
+            ' ': 'g', '.': {' ': 'z'}, '-': {' ': 'q'}},
+        '-': {' ': 'o'}}
+}}
+
 
 def BinToMorse(binary):
     binary = str(format(binary, 'b')) + '0'
@@ -43,9 +73,21 @@ def MorseToBinary(morse):
             binary += '00'
     return binary
 
+def MorseToLatin(morse):
+    latin = ''
+    morse += ' '
+    while morse:
+        c = Latin
+        while not isinstance(c, str):
+            c = c[morse[0]]
+            morse =  morse[1:]
+        latin += c
+    return latin
+
 
 if __name__ == '__main__':
     print(BinToMorse(0b111000100000001))
     # print(bin(137))
 
-    print(MorseToBinary('... --- ...'))
+    print(MorseToLatin('... --- ...'))
+    input()
