@@ -35,15 +35,20 @@ Latin = {
         '-': {' ': 'o'}}
 }}
 
-def tree_build(d: dict[str, str])
+def tree_build(d: dict[str, str]):
     # take dict from char to morse
     # return tree from morse to char
-    return {' ': key if not len(val) else
-            '.': tree_build({key: val[1:]
-                }) if val[0] == '.' else
-            "-": tree_build({
-                }) if val[0] == '-'
-            for key,val in d}
+    if not d or isinstance(d, str):
+        return d
+    
+    back = {'.': {}, '-': {}}
+    for key,val in d.items():
+        if not len(val):
+            back[' '] = key
+        else:
+            back[val[0]][key] = val[1:]
+    
+    return {m: tree_build(val) for m, val in back.items()}
 
 def BinToMorse(binary):
     binary = str(format(binary, 'b')) + '0'
@@ -99,5 +104,5 @@ if __name__ == '__main__':
     # print(bin(137))
 
     print(MorseToLatin('... --- ...'))
-    print(tree_build({"a": "-.", "b": "-...", "c": "-.-."}))
+    print(str(tree_build({"a": "-.", "b": "-...", "c": "-.-."})).replace("'},", "'},\n"))
     input()
