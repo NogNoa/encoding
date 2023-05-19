@@ -53,6 +53,19 @@ def tree_build(d: dict[str, str] | str):
     # construct the . and - branches. the SP branch returns immedietly
     return {m: tree_build(val) for m, val in back.items() if val}
 
+def tree_extend(tree: dict[dict], d: dict[str, str] | str):
+    back = {' ': {}, '.': {}, '-': {}}
+    for key,val in d.items():
+        if not len(val):
+            # the SP branch if it exist is a key leaf
+            back[' '] = key
+        else:
+            # collect the items to a . branch and - branch
+            back[val[0]][key] = val[1:]
+    back = {m: tree_extend(tree[m], val) for m, val in back.items()}
+    return {m: val for m, val in back.items() if val}
+
+
 def BinToMorse(binary):
     binary = str(format(binary, 'b')) + '0'
     morse = ''
