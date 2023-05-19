@@ -44,7 +44,7 @@ if scroll[:5] == b'PATCH':
 else:
     raise IOError
 
-while scroll:
+while True:
     # state body
     if scroll[:3] == b"EOF":
         break
