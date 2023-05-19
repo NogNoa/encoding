@@ -35,6 +35,17 @@ Latin = {
         '-': {' ': 'o'}}
 }}
 
+def tree_build(d: dict[str, str])
+    # take dict from char to morse
+    # return tree from morse to char
+    return {m: tree_build(
+        {' ': key for key,val in d if not len(val) else
+        key: val[1:] if val[0] == m}
+        )
+     for m in ".-"}
+    
+
+
 
 def BinToMorse(binary):
     binary = str(format(binary, 'b')) + '0'
