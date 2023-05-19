@@ -38,8 +38,8 @@ Latin = {
 def tree_build(d: dict[str, str] | str):
     # take dict from char to morse
     # returns a tree from morse to char
-    if not d or isinstance(d, str):
-        # empty dicts and the original keys are the leaves
+    if isinstance(d, str):
+        # the original keys are the leaves
         return d
     
     back = {'.': {}, '-': {}}
@@ -51,7 +51,7 @@ def tree_build(d: dict[str, str] | str):
             # collect the items to a . branch and - branch
             back[val[0]][key] = val[1:]
     # construct the . and - branches. the SP branch returns immedietly
-    return {m: tree_build(val) for m, val in back.items()}
+    return {m: tree_build(val) for m, val in back.items() if val}
 
 def BinToMorse(binary):
     binary = str(format(binary, 'b')) + '0'
