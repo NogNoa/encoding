@@ -58,7 +58,7 @@ def tree_build(d: dict[str, str] | str):
 
 
 # noinspection GrazieInspection
-def tree_extend(tree: dict | str, d: dict[str, str] | str, overwrite: bool = False):
+def tree_extend(tree: dict | str | MappingProxyType, d: dict[str, str] | str, overwrite: bool = False):
     if not d:
         return tree
     elif not tree:
@@ -137,7 +137,10 @@ def MorseDecode(morse, tree=Latin):
 if __name__ == '__main__':
     print(BinToMorse(0b111000100000001))
     # print(bin(137))
+    new_Latin = tree_extend(Latin, {'0': "-" * 5,
+                                    '1': "." + "-" * 4,
+                                    '2': "." * 2 + "-" * 3})
+    print(MorseDecode('... --- ...', new_Latin))
 
-    print(MorseDecode('... --- ...'))
     print(str(tree_build({"a": "-.", "b": "-...", "c": "-.-."})).replace("'},", "'},\n"))
     input()
