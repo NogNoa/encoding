@@ -138,7 +138,9 @@ if __name__ == '__main__':
     print(BinToMorse(0b111000100000001))
     # print(bin(137))
     new_Latin = tree_extend(Latin, {
-        str(i): ('-' * (i - 5) + '.' * (5 - ((i - 5) if (i > 5) else (5 - i) if (i < 5) else 0)) + '_' * (5 - i))
+        str(i): ('-' * (i - 5) +
+                 '.' * ((10 - i) if (i > 5) else i if (i < 5) else 5) +
+                 '_' * (5 - i))
         for i in range(10)
     })
     print(MorseDecode('... --- ...', new_Latin))
