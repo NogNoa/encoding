@@ -137,7 +137,10 @@ def MorseDecode(morse, tree=Latin):
 if __name__ == '__main__':
     print(BinToMorse(0b111000100000001))
     # print(bin(137))
-    new_Latin = tree_extend(Latin, {str(i): ('-' * (i - 5) + '.' * i + '_' * (5 - i))for i in range(10)})
+    new_Latin = tree_extend(Latin, {
+        str(i): ('-' * (i - 5) + '.' * (5 - (i - 5) * (i > 5) - (5 - i) * (i < 5)) + '_' * (5 - i))
+        for i in range(10)
+    })
     print(MorseDecode('... --- ...', new_Latin))
 
     print(str(tree_build({"a": "-.", "b": "-...", "c": "-.-."})).replace("'},", "'},\n"))
