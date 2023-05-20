@@ -66,7 +66,7 @@ def tree_extend(tree: dict | str | MappingProxyType, d: dict[str, str] | str, ov
     elif isinstance(d, str) or isinstance(tree, str):
         return tree_build(d) if overwrite else tree
 
-    back = {' ': {}, '.': {}, '-': {}}
+    back = {'.': {}, '-': {}}
     for key, val in d.items():
         if not len(val):
             # the SP branch if it exists is a key leaf
@@ -74,7 +74,11 @@ def tree_extend(tree: dict | str | MappingProxyType, d: dict[str, str] | str, ov
         else:
             # collect the items to a . branch and - branch
             back[val[0]][key] = val[1:]
-    for m in ' .-':
+    try:
+        back[' '] = tree[' ']
+    except KeyError:
+        pass
+    for m in '.-':
         try:
             tree[m]
         except KeyError:
@@ -139,8 +143,8 @@ if __name__ == '__main__':
     # print(bin(137))
     new_Latin = tree_extend(Latin, {
         str(i): ('-' * (i - 5) +
-                 '.' * ((10 - i) if (i > 5) else i if (i < 5) else 5) +
-                 '_' * (5 - i))
+                 '.' * ((10 - i) if (i > 5) else i) +
+                 '-' * (5 - i))
         for i in range(10)
     })
     print(MorseDecode('... --- ...', new_Latin))
