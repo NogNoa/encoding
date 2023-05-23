@@ -74,11 +74,8 @@ def tree_extend(tree: dict | str | MappingProxyType, d: dict[str, str] | str, ov
         else:
             # collect the items to a . branch and - branch
             back[val[0]][key] = val[1:]
-    try:
-        back[' '] = tree[' ']
-    except KeyError:
-        pass
-    for m in '.-':
+    back[' '] = {}
+    for m in ' .-':
         try:
             tree[m]
         except KeyError:
