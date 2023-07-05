@@ -80,15 +80,16 @@ class abBin:
         return self.val
 
     def ordinise(self):
-        strbin = ''
-        for b in self.val:
+        strbin = 0
+        for b in self.val[::-1]:
+            strbom <<= 1
             if b == 'a':
-                strbin += '0'
+                pass
             elif b == 'b':
-                strbin += '1'
+                strbin |= 1
             else:
                 print(f'That\'s weird. I didn\'t expect any {b} in a&b binary {self.val}.')
-        return Ordinal(int(strbin, 2))
+        return Ordinal(strbin, 2)
 
     def letterise(self):
         return self.ordinise().letterise()
