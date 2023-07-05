@@ -56,12 +56,7 @@ class Ordinal:
 
     def abbinise(self):
         strbin = format(self.val, 'b')  # sans 0b prefix
-        strab = ''
-        for b in strbin:
-            if b == '0':
-                strab += 'a'
-            else:
-                strab += 'b'
+        strab = strbin.replace('0','a').replace('1','b')
         return abBin(strab)
 
 
@@ -80,16 +75,13 @@ class abBin:
         return self.val
 
     def ordinise(self):
-        strbin = 0
-        for b in self.val[::-1]:
-            strbom <<= 1
-            if b == 'a':
-                pass
-            elif b == 'b':
-                strbin |= 1
-            else:
-                print(f'That\'s weird. I didn\'t expect any {b} in a&b binary {self.val}.')
-        return Ordinal(strbin, 2)
+        strbin = self.val.replace('a','0').replace('b','1')
+        try:
+            strbin = int(strbin, 2)
+        except ValueError as err:
+            strbin = strbin.replace('0','').replace('1','')
+            raise ValueError(f'That\'s weird. I didn\'t expect {strbin} in a&b binary {self.val}.') from err
+        return Ordinal(strbin)
 
     def letterise(self):
         return self.ordinise().letterise()
