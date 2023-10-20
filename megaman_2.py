@@ -21,52 +21,6 @@ def pent_numerise(pent: str) -> int:
     return number
 
 
-class NumList:
-    """format: [9*(0–24)]"""
-
-    def __init__(self, call: list):
-        self.val = call
-
-    def __str__(self):
-        return str(self.val)
-
-    def num_pentise(self):
-        back = [num_pentise(pl) for pl in self.val]
-        return PentList(back)
-
-    def num_statify(self):
-        boss_ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
-        boss_post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
-        number_list = self.val[:9]
-        # ^accepting too long inputs but at user's risk as only first 9 items get through
-        etank = min(number_list)
-        number_list.remove(etank)
-        if etank >= 5:
-            print("Invalid Password")
-            return
-            # raise ValueError()
-        bossi = [2, 2, 2, 2, 2, 2, 2, 2]
-
-        # 0 or 1 will not be distinguised from boolians. None should also work, it's just more crowding.
-
-        def is_defeated(group, val):
-            if boss in group:
-                place = group.index(boss)
-                bossi[place] = val
-
-        while number_list:
-            boss = number_list.pop() - etank
-            boss += 20 * (boss < 5)
-            # see comment for {boss -= 20 * (boss > 24)} in function stt_numerise
-            is_defeated(boss_ante, False)
-            is_defeated(boss_post, True)
-        if 2 in bossi:
-            print("Invalid Password")
-            return
-            # raise ValueError()
-        return StateVar(bossi, etank)
-
-
 class PentList:
     """ format: 9*((A–E)(1–5))
     a list of pent values
@@ -114,32 +68,50 @@ class PentList:
         back.close()
 
 
-class StateBin:
-    """ format: (0–1279) i.e.
-                ((0–255)+2^8*(0–4))
-    low 8bits for bosses, high 3bits for Etanks"""
+class NumList:
+    """format: [9*(0–24)]"""
 
-    def __init__(self, call: int):
-        if call > 2047:
-            raise ValueError(f'state value {call}, {bin(call)} is larger than 11bits')
+    def __init__(self, call: list):
         self.val = call
 
     def __str__(self):
-        return bin(self.val)
+        return str(self.val)
 
-    def bin_variablise(self):
-        bosses = [0, 0, 0, 0, 0, 0, 0, 0]
-        for i in range(8):
-            back: int = self.val & 2 ** i
-            back = bool(back)
-            bosses[i] = back
-        etank = self.val // 2 ** 8
-        return StateVar(bosses, etank)
+    def num_pentise(self):
+        back = [num_pentise(pl) for pl in self.val]
+        return PentList(back)
 
-    def save(self, file='mm2.sav'):
-        back = self.val.to_bytes(2, 'little')
-        with open(file, 'w+b') as file:
-            file.write(back)
+    def num_statify(self):
+        boss_ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
+        boss_post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
+        number_list = self.val[:9]
+        # ^accepting too long inputs but at user's risk as only first 9 items get through
+        etank = min(number_list)
+        number_list.remove(etank)
+        if etank >= 5:
+            print("Invalid Password")
+            return
+            # raise ValueError()
+        bossi = [2, 2, 2, 2, 2, 2, 2, 2]
+
+        # 0 or 1 will not be distinguised from boolians. None should also work, it's just more crowding.
+
+        def is_defeated(group, val):
+            if boss in group:
+                place = group.index(boss)
+                bossi[place] = val
+
+        while number_list:
+            boss = number_list.pop() - etank
+            boss += 20 * (boss < 5)
+            # see comment for {boss -= 20 * (boss > 24)} in function stt_numerise
+            is_defeated(boss_ante, False)
+            is_defeated(boss_post, True)
+        if 2 in bossi:
+            print("Invalid Password")
+            return
+            # raise ValueError()
+        return StateVar(bossi, etank)
 
 
 class StateVar:
@@ -186,6 +158,34 @@ class StateVar:
                     in enumerate(self.bossi)),
                    start=back)
         return StateBin(back)
+
+
+class StateBin:
+    """ format: (0–1279) i.e.
+                ((0–255)+2^8*(0–4))
+    low 8bits for bosses, high 3bits for Etanks"""
+
+    def __init__(self, call: int):
+        if call > 2047:
+            raise ValueError(f'state value {call}, {bin(call)} is larger than 11bits')
+        self.val = call
+
+    def __str__(self):
+        return bin(self.val)
+
+    def bin_variablise(self):
+        bosses = [0, 0, 0, 0, 0, 0, 0, 0]
+        for i in range(8):
+            back: int = self.val & 2 ** i
+            back = bool(back)
+            bosses[i] = back
+        etank = self.val // 2 ** 8
+        return StateVar(bosses, etank)
+
+    def save(self, file='mm2.sav'):
+        back = self.val.to_bytes(2, 'little')
+        with open(file, 'w+b') as file:
+            file.write(back)
 
 
 # file loading functions
