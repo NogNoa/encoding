@@ -101,12 +101,12 @@ class PentList:
             col = int(pl[1]) - 1
             # ^just translating numeral digit from pent to an integer index in the corresponding list
             lexicon[row][col] = 1
-        back = open(file, 'w+')
+        back = open(file, 'w+', encoding="utf-8")
         back.write(',1,2,3,4,5\n')
         for i in lexicon:
             line = i + ','
             for j in lexicon[i]:
-                line += '\u2022' * j + ','
+                line += '\u2B24' * j + ','
                 # the circle symbol ⬤ is U+2B24
                 # the bullet symbol • is U+2022
             line += '\n'
@@ -169,27 +169,22 @@ class StateVar:
         boss_ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
         boss_post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
         pswd = []
-        for pl in enumerate(self.bossi):
-            i = pl[0]
-            cond = pl[1]
-            if cond:
-                boss = boss_post[i]
-            else:
-                boss = boss_ante[i]
+        for i, cond in enumerate(self.bossi):
+            boss = boss_post[i] if cond else boss_ante[i]
             boss = boss + self.etank
             # if we reach E5, which is 24 (4*5 +5 -1) the next should be B1 = 5 (1*5 + 1 - 1)
-            # instead of 25. So 20 less. The A row is actually kept for the Etanks count itself.
+            # instead of 25. So 20 less. The A row is actually kept for the Etank count itself.
             boss -= 20 * (boss > 24)
             pswd += [boss]
         pswd += [self.etank]
         return NumList(pswd)  # as list of 9 numbers
 
     def stt_binarise(self):
-        back = self.etank * 2 ** 8
-        for pl in enumerate(self.bossi):
-            i = pl[0]
-            cond = pl[1]
-            back += cond * 2 ** i
+        back = self.etank << 8
+        back = sum((cond << i
+                    for i, cond
+                    in enumerate(self.bossi)),
+                   start=back)
         return StateBin(back)
 
 
@@ -207,10 +202,6 @@ def table_num_listise(file='MM2pswd.csv'):
         raise ValueError(file)
     call = open(file, 'r+').readlines()
     call = [pl.split(',') for pl in call]
-    """
-    for i in call:
-        i = [pl == '•' for pl in i]
-    """
     back = []
     for line in call:
         for pl in range(1, 6):
