@@ -296,33 +296,31 @@ if __name__ == "__main__":
         print('Something was wrong with the action you entered. Sorry')
         exit(1)
 
-    """
-    if args.action in get:
+    if args.get:
         call = load_bin(args.save).bin_variablise()
-        if args.tpye in inv:
+        if args.inventory:
             back = call.inventorise()
             print(back)
         else:
             back = call.stt_numerise().num_pentise()
-            if args.type in tbl:
+            if args.table:
                 call.stt_numerise().num_pentise().make_table(args.object)
                 print("You created table in ", args.object.path)
             else:
                 print(back)
-        else:
-            print('Something was wrong with the type you entered. Sorry')
-    elif args.action in giv:
-        if args.type in pwd:
-            call = pent_list(args.object)
+        # else:
+        #     print('Something was wrong with the type you entered. Sorry')
+    elif args.give:
+        if args.password:
+            call = PentList(args.object)
             back = call.pent_numerise()
-        elif args.type in tbl:
+        elif args.table:
             back = table_num_listise(args.object)
         else:
             raise ValueError('Something was wrong with the type you entered. Sorry')
         back.num_statify().stt_binarise().save(args.save)
     else:
         print('Something was wrong with the action you entered. Sorry')
-
 
     jack = StateBin(1279).bin_variablise().stt_numerise()
     jack = jack.num_statify().stt_binarise()
@@ -353,7 +351,6 @@ if __name__ == "__main__":
     bill.pent_objectify()
     print(bill.val[2].val)
     print(StateBin(2048).bin_variablise())
-    """
 
 # Td:
 # DONE: got password: D5 B2 C3 C1 E2 B4 C5 D4 A5. Program itself claims it's invalid.
@@ -370,5 +367,6 @@ if __name__ == "__main__":
 
 # $009A bits from little endian [Heatman, Airman, Woodman, Bubbleman, Quickman, Flashman, Metalman, Crashman]
 # $009B the least significant bits for items 1,2,3 in order
+# $00A7 number of energy tanks
 
-# .mst: CPU RAM starts at $1720, hence $17BA $17BB
+# .mst: CPU RAM starts at $1720, hence $17BA $17BB $17C7
