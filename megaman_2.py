@@ -6,7 +6,7 @@ import argparse
 
 
 def num_pentise(number: int):
-    """input format: (0-24)
+    """input format: (0–24)
     returns the place of a dot in a five by five table.
      pent values goes from A1 to E5"""
     back = ascii_uppercase[number // 5] + str(number % 5 + 1)
@@ -14,7 +14,7 @@ def num_pentise(number: int):
 
 
 class NumList:
-    """format: [9*(0-24)]"""
+    """format: [9*(0–24)]"""
 
     def __init__(self, call: list):
         self.val = call
@@ -60,7 +60,7 @@ class NumList:
 
 
 class Pent:
-    """format: (A-E)(1-5)"""
+    """format: (A–E)(1–5)"""
 
     def __init__(self, call: str):
         self.val = call
@@ -77,7 +77,7 @@ class Pent:
 
 
 class PentList:
-    """ format: 9*((A-E)(1-5))
+    """ format: 9*((A–E)(1–5))
     a list of pent values
     """
 
@@ -128,8 +128,8 @@ class PentList:
 
 
 class StateBin:
-    """ format: (0-1279) i.e.
-                ((0-255)+2^8*(0-4))
+    """ format: (0–1279) i.e.
+                ((0–255)+2^8*(0–4))
     low 8bits for bosses, high 3bits for Etanks"""
 
     def __init__(self, call: int):
@@ -156,7 +156,7 @@ class StateBin:
 
 
 class StateVar:
-    """format: [8*(bool)], (0-4)"""
+    """format: [8*(bool)], (0–4)"""
 
     def __init__(self, bossi, etank):
         self.bossi, self.etank = bossi, etank
@@ -172,13 +172,13 @@ class StateVar:
                 return ' '
 
         b = self.bossi
-        back =              'P'        + mask('B', b[0]) + mask('A', b[1]) + mask('Q', b[2])
+        back = 'P' + mask('B', b[0]) + mask('A', b[1]) + mask('Q', b[2])
         back += '\n' + mask('H', b[3]) + mask('W', b[4]) + mask('M', b[5]) + mask('F', b[6])
         back += '\n' + mask('C', b[7]) + mask('1', b[3]) + mask('2', b[1]) + mask('3', b[6])
         return back
 
     def stt_numerise(self):
-        # output format: [8*(0-24), (0-4)]
+        # output format: [8*(0–24), (0–4)]
         boss_ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
         boss_post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
         pswd = []
@@ -287,7 +287,6 @@ if __name__ == "__main__":
     else:  # if all types have failed
         print('Something was wrong with the type you entered. Sorry')
         exit(2)
-        typ = None
 
     if args.get:
         print(bin_get(type_=typ, object_=args.object, bin_=args.save))
@@ -362,9 +361,14 @@ if __name__ == "__main__":
 #       console interface;
 #       save > inventory
 #       table, password <> save
-#        File interface; print to table, mention input format in function name.
+#       File interface; print to table, mention input format in function name.
 # Boss_list = [Bubbleman, Airman, Quickman, Heatman, Woodman, Metalman, Flashman, Crashman]
 # Boss_Ante = ["C3", 'D2', 'C4', 'D5', 'B5', 'E1', 'E4', 'E2']  # pre-win values
 # Boss_Post = ['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']  # post-win values
 # Boss_Ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
 # Boss_Post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
+
+# $009A bits from little endian [Heatman, Airman, Woodman, Bubbleman, Quickman, Flashman, Metalman, Crashman]
+# $009B the least significant bits for items 1,2,3 in order
+
+# .mst: CPU RAM starts at $1720, hence $17BA $17BB

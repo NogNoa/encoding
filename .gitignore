@@ -2,10 +2,13 @@
 .idea/
 __pycache__/
 venv/
+
 *.csv
 *.txt
 *.ips
 *.gb
+*.bak
+
 mm2.sav
 goblin*
 bacon code.tgf

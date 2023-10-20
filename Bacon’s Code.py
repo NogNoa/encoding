@@ -22,7 +22,7 @@ order = ascii_lowercase.replace('j', '').replace('v', '')
 
 
 class Letter:
-    """format:1*(a-z).exclude(j,v)"""
+    """format:1*(a–z).exclude(j,v)"""
 
     def __init__(self, letter: str):
         letter = letter.lower()
@@ -43,7 +43,7 @@ class Letter:
 
 
 class Ordinal:
-    """Format:(0-23)"""
+    """Format:0–23"""
 
     def __init__(self, ordinal: int):
         self.val = ordinal
@@ -56,7 +56,7 @@ class Ordinal:
 
     def abbinise(self):
         strbin = format(self.val, 'b')  # sans 0b prefix
-        strab = strbin.replace('0','a').replace('1','b')
+        strab = strbin.replace('0', 'a').replace('1', 'b')
         return abBin(strab)
 
 
@@ -75,11 +75,11 @@ class abBin:
         return self.val
 
     def ordinise(self):
-        strbin = self.val.replace('a','0').replace('b','1')
+        strbin = self.val.replace('a', '0').replace('b', '1')
         try:
             strbin = int(strbin, 2)
         except ValueError as err:
-            strbin = strbin.replace('0','').replace('1','')
+            strbin = strbin.replace('0', '').replace('1', '')
             raise ValueError(f'That\'s weird. I didn\'t expect {strbin} in a&b binary {self.val}.') from err
         return Ordinal(strbin)
 
@@ -102,7 +102,7 @@ class abBin:
 
 
 class FalsePacket:
-    """format:5*(a-z,A-Z)"""
+    """format:5*(a–z,A–Z)"""
 
     def __init__(self, string: str):
         self.val = string
@@ -142,7 +142,7 @@ def listise(message: str):
 
 
 class TrueMessage:
-    """format:free.exclude(A-Z)"""
+    """format:free.exclude(A–Z)"""
 
     def __init__(self, text: str):
         self.val = text
@@ -220,7 +220,7 @@ def expose(call):
 
 
 def bacon(true, key):
-    if type(true) is str:
+    if not isinstance(true, TrueMessage):
         true = TrueMessage(true)
     key = expose(key)
     back = true.list_abbinise().falsify(key)
@@ -290,6 +290,7 @@ if __name__ == "__main__":
     joe = jim.falsify(lock)
     print(joe.list_abbinise().expose())
 
+    # noinspection PyTypeChecker
     joe = bacon('Tolkien', lock)
     Jay = decipher(joe)
     bacon_file("README.md", "english.txt")
