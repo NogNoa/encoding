@@ -5,12 +5,20 @@ from string import ascii_uppercase
 import argparse
 
 
-def num_pentise(number: int):
+def num_pentise(number: int) -> str:
     """input format: (0–24)
     returns the place of a dot in a five by five table.
      pent values goes from A1 to E5"""
     back = ascii_uppercase[number // 5] + str(number % 5 + 1)
-    return Pent(back)
+    return back
+
+
+def pent_numerise(pent: str) -> int:
+    """format: (A–E)(1–5)"""
+    row: str = pent[0]
+    col: str = pent[1]
+    number: int = (ascii_uppercase.index(row)) * 5 + int(col) - 1
+    return number
 
 
 class NumList:
@@ -23,7 +31,7 @@ class NumList:
         return str(self.val)
 
     def num_pentise(self):
-        back = [num_pentise(pl).val for pl in self.val]
+        back = [num_pentise(pl) for pl in self.val]
         return PentList(back)
 
     def num_statify(self):
@@ -59,29 +67,12 @@ class NumList:
         return StateVar(bossi, etank)
 
 
-class Pent:
-    """format: (A–E)(1–5)"""
-
-    def __init__(self, call: str):
-        self.val = call
-
-    def __str__(self):
-        return self.val
-
-    def pent_numerise(self):
-        call = self.val
-        row: str = call[0]
-        col: str = call[1]
-        number: int = (ascii_uppercase.index(row)) * 5 + int(col) - 1
-        return number
-
-
 class PentList:
     """ format: 9*((A–E)(1–5))
     a list of pent values
     """
 
-    def __init__(self, table):
+    def __init__(self, table: str | list[str]):
         # table string has to be 9 pent values with spaces!
         # it could be just a list
         if type(table) is str:
@@ -91,12 +82,8 @@ class PentList:
     def __str__(self):
         return str(self.val)
 
-    def pent_objectify(self):
-        back = [Pent(pl) for pl in self.val]
-        return back
-
     def pent_numerise(self):
-        back = [pl.pent_numerise() for pl in self.pent_objectify()]
+        back = [pent_numerise(pl) for pl in self.val]
         return NumList(back)
 
     def make_table(self, file='MM2pswd.csv'):
@@ -327,10 +314,10 @@ if __name__ == "__main__":
     print(jack.val)
     jack.save()
 
-    bill = PentList(['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']).pent_objectify()
+    bill = PentList(['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']).val
     jill = []
     for a in bill:
-        jill += [a.pent_numerise()]
+        jill += [pent_numerise(a)]
     print(jill)
 
     bill = PentList(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
@@ -348,8 +335,7 @@ if __name__ == "__main__":
     print(bill.val)
 
     bill = PentList("C3-D5-D2-B5-C4-E4-E2-E1")
-    bill.pent_objectify()
-    print(bill.val[2].val)
+    print(bill.val[2])
     print(StateBin(2048).bin_variablise())
 
 # Td:
