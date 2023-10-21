@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from string import ascii_uppercase
-# from codecs import open as cdcopen
 import argparse
 
 
@@ -92,9 +91,7 @@ class NumList:
             print("Invalid Password")
             return
             # raise ValueError()
-        bossi = [2, 2, 2, 2, 2, 2, 2, 2]
-
-        # 0 or 1 will not be distinguised from boolians. None should also work, it's just more crowding.
+        bossi = [None] * 8
 
         def is_defeated(group, val):
             if boss in group:
@@ -107,7 +104,7 @@ class NumList:
             # see comment for {boss -= 20 * (boss > 24)} in function stt_numerise
             is_defeated(boss_ante, False)
             is_defeated(boss_post, True)
-        if 2 in bossi:
+        if None in bossi:
             print("Invalid Password")
             return
             # raise ValueError()
@@ -152,26 +149,37 @@ class StateVar:
         return NumList(pswd)  # as list of 9 numbers
 
     def stt_binarise(self):
-        back = self.etank << 8
-        back = sum((cond << i
+        items = sum(cond << i
                     for i, cond
-                    in enumerate(self.bossi)),
-                   start=back)
-        return StateBin(back)
+                    in enumerate(
+                      (self.bossi[3], self.bossi[1], self.bossi[6])))
+        bossi = sum((cond << i
+                     for i, cond
+                     in enumerate(self.bossi)))
+        return StateBin(bossi, items, self.etank)
 
 
 class StateBin:
-    """ format: (0–1279) i.e.
-                ((0–255)+2^8*(0–4))
-    low 8bits for bosses, high 3bits for Etanks"""
 
-    def __init__(self, call: int):
-        if call > 2047:
-            raise ValueError(f'state value {call}, {bin(call)} is larger than 11bits')
-        self.val = call
+    def __init__(self, bossi: int, itemi: int, etank: int):
+        self.bossi = bossi
+        self.itemi = itemi
+        self.etank = etank
 
     def __str__(self):
-        return bin(self.val)
+        return str((self.bossi, self.itemi, self.etank))
+
+    def serialize(self):
+        """ format: 16-bit number (0–65_536)
+        lower byte for bosses,
+        middle nibble for items (0-7)
+        high nibble for etanks (0-4)"""
+        back = self.etank << 12
+        back |= self.itemi << 8
+        back |= self.bossi
+        if back > 65_536:
+            raise ValueError(f'state value {back}, {bin(back)} is larger than 16bits')
+        return back
 
     def bin_variablise(self):
         bosses = [0, 0, 0, 0, 0, 0, 0, 0]
