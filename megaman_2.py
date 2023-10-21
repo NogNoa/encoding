@@ -181,19 +181,30 @@ class StateBin:
             raise ValueError(f'state value {back}, {bin(back)} is larger than 16bits')
         return back
 
-    def bin_variablise(self):
-        bosses = [0, 0, 0, 0, 0, 0, 0, 0]
-        for i in range(8):
-            back: int = self.val & 2 ** i
-            back = bool(back)
-            bosses[i] = back
-        etank = self.val // 2 ** 8
-        return StateVar(bosses, etank)
+    @staticmethod
+    def deserialize(call: int):
+        bossi = call | ((1 << 8) - 1)
+        itemi = call | (((1 << 4) - 1) << 8)
+        etank = call | (((1 << 4) - 1) << 12)
+        return StateBin(bossi, itemi, etank)
 
-    def save(self, file='mm2.sav'):
-        back = self.val.to_bytes(2, 'little')
-        with open(file, 'w+b') as file:
-            file.write(back)
+    def bin_variablise(self):
+        bosses = (bool(self.bossi & (1 << i)) for i in range(8))
+        return StateVar(bosses, self.etank)
+
+    def save(self, file='mm2.sav', ext: str = "mst"):
+        if ext == "mst":
+            offset = 0x1720
+        else:
+            return NotImplemented
+        with open(file, 'rb') as file:
+            scroll = file.read()
+        scroll = bytearray(scroll)
+        scroll[offset+0x9A] = self.bossi
+        scroll[offset+0x9B] = self.itemi
+        scroll[offset+0xA7] = self.etank
+        with open("mg2.sav", 'w+b') as file:
+            file.write(scroll)
 
 
 # file loading functions
@@ -308,9 +319,9 @@ if __name__ == "__main__":
     else:
         print('Something was wrong with the action you entered. Sorry')
 
-    jack = StateBin(1279).bin_variablise().stt_numerise()
+    jack = StateBin.deserialize(1279).bin_variablise().stt_numerise()
     jack = jack.num_statify().stt_binarise()
-    print(jack.val)
+    print(jack)
     jack.save()
 
     bill = PentList(['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']).val
@@ -326,18 +337,18 @@ if __name__ == "__main__":
     bill = bill.num_statify()
     print(bill.bossi, bill.etank)
     bill = bill.stt_binarise()
-    print(bill.val)
+    print(bill)
     bill.save()
     mill = load_bin()
-    print(mill, mill.val, type(mill))
+    print(mill, type(mill))
     bill = table_num_listise()
     print(bill.val)
 
     bill = PentList("C3-D5-D2-B5-C4-E4-E2-E1")
     print(bill.val[2])
-    print(StateBin(2048).bin_variablise())
+    print(StateBin.deserialize(2048).bin_variablise())
 
-# Td:
+# Td: change boss order
 # DONE: got password: D5 B2 C3 C1 E2 B4 C5 D4 A5. Program itself claims it's invalid.
 #       reimplement cmdln interface
 #       console interface;
