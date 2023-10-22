@@ -9,8 +9,8 @@ venv/
 *.gb
 *.bak
 *.mst
+*.sav
 
-mm2.sav
 goblin*
 bacon code.tgf
 a.out

@@ -185,9 +185,9 @@ class StateBin:
 
     @staticmethod
     def deserialize(call: int):
-        bossi = call | ((1 << 8) - 1)
-        itemi = call | (((1 << 4) - 1) << 8)
-        etank = call | (((1 << 4) - 1) << 12)
+        bossi = call & ((1 << 8) - 1)
+        itemi = (call >> 8) & ((1 << 4) - 1)
+        etank = (call >> 12) & ((1 << 4) - 1)
         return StateBin(bossi, itemi, etank)
 
     def bin_variablise(self):
@@ -205,7 +205,7 @@ class StateBin:
         scroll[offset+0x9A] = self.bossi
         scroll[offset+0x9B] = self.itemi
         scroll[offset+0xA7] = self.etank
-        with open("mg2.sav", 'w+b') as file:
+        with open("mm2.sav", 'w+b') as file:
             file.write(scroll)
 
 
@@ -304,7 +304,7 @@ if __name__ == "__main__":
     jack = StateBin.deserialize(1279).bin_variablise().stt_numerise()
     jack = jack.num_statify().stt_binarise()
     print(jack)
-    jack.save()
+    jack.save("Air man.mst")
 
     bill = PentList(['D1', 'E3', 'B4', 'B2', 'D3', 'E5', 'C1', 'C5']).val
     jill = []
@@ -348,3 +348,6 @@ if __name__ == "__main__":
 # $00A7 number of energy tanks
 
 # .mst: CPU RAM starts at $1720, hence $17BA $17BB $17C7
+
+# reorder: 3 1 4 0 2 6 5 7
+# items: 3 1 6 -> 0 1 5
