@@ -39,7 +39,9 @@ class PentList:
         back = [pent_numerise(pl) for pl in self.val]
         return NumList(back)
 
-    def make_table(self, file='MM2pswd.csv'):
+    def make_table(self, file):
+        if file is None:
+            file = 'MM2pswd.csv'
         if file[-4:] != '.csv':
             file += '.csv'
         lexicon = {
@@ -209,10 +211,15 @@ class StateBin:
 
 # file loading functions
 
-def load_bin(file='mm2.sav'):
-    call = open(file, 'r+b').read()
-    back = int.from_bytes(call, 'little')
-    return StateBin(back)
+def load_bin(file='mm2.sav', ext: str = "mst"):
+    if ext == "mst":
+        offset = 0x1720
+    else:
+        raise Exception("extention not supported")
+    with open(file, 'r+b') as file:
+        scroll = file.read()[offset:]
+    bossi, itemi, etank = scroll[0x9A], scroll[0x9B], scroll[0xA7]
+    return StateBin(bossi, itemi, etank)
 
 
 def table_num_listise(file='MM2pswd.csv'):
@@ -234,8 +241,9 @@ if __name__ == "__main__":
 
     # parser functunality
 
-    def bin_get(type_, object_=None, bin_=None):
-        call = load_bin(bin_).bin_variablise()
+    def bin_get(type_, object_, bin_):
+        ext = (bin_ or '.').split(".")[1]
+        call = load_bin(bin_, ext).bin_variablise()
         if type_[0] == 'i':
             back = call.inventorise()
         else:
@@ -250,7 +258,7 @@ if __name__ == "__main__":
         return back
 
 
-    def bin_give(type_, object_=None, bin_=None):
+    def bin_give(type_, object_, bin_):
         if type_[0] == 't':
             object_ = table_num_listise(object_)
         elif type_[0] == 'p':
@@ -272,7 +280,7 @@ if __name__ == "__main__":
     typs.add_argument('-p', '-P', '--password', help='', action="store_true")
     typs.add_argument('-i', '-I', '--inventory', help='', action="store_true")
     parser.add_argument('-o', '--object', help='path to table file or the password sepereted by spaces.', type=str)
-    parser.add_argument('-s', '--save', help='the path to your target save file', type=str)
+    parser.add_argument('-s', '--save', help='the path to your target save file', type=str, default='mm2.sav')
     args = parser.parse_args()
 
     if args.table:
@@ -293,32 +301,6 @@ if __name__ == "__main__":
         print('Something was wrong with the action you entered. Sorry')
         exit(1)
 
-    if args.get:
-        call = load_bin(args.save).bin_variablise()
-        if args.inventory:
-            back = call.inventorise()
-            print(back)
-        else:
-            back = call.stt_numerise().num_pentise()
-            if args.table:
-                call.stt_numerise().num_pentise().make_table(args.object)
-                print("You created table in ", args.object.path)
-            else:
-                print(back)
-        # else:
-        #     print('Something was wrong with the type you entered. Sorry')
-    elif args.give:
-        if args.password:
-            call = PentList(args.object)
-            back = call.pent_numerise()
-        elif args.table:
-            back = table_num_listise(args.object)
-        else:
-            raise ValueError('Something was wrong with the type you entered. Sorry')
-        back.num_statify().stt_binarise().save(args.save)
-    else:
-        print('Something was wrong with the action you entered. Sorry')
-
     jack = StateBin.deserialize(1279).bin_variablise().stt_numerise()
     jack = jack.num_statify().stt_binarise()
     print(jack)
@@ -331,7 +313,7 @@ if __name__ == "__main__":
     print(jill)
 
     bill = PentList(['D4', 'B1', 'C2', 'B5', 'E1', 'B3', 'C4', 'D3', 'A4'])
-    bill.make_table()
+    bill.make_table(None)
     bill = bill.pent_numerise()
     print(bill.val)
     bill = bill.num_statify()
