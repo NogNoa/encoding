@@ -3,6 +3,8 @@
 from string import ascii_uppercase
 import argparse
 
+boss_ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
+boss_post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
 
 def num_pentise(number: int) -> str:
     """input format: (0–24)
@@ -83,8 +85,6 @@ class NumList:
         return PentList(back)
 
     def num_statify(self):
-        boss_ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
-        boss_post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
         number_list = self.val[:9]
         # ^accepting too long inputs but at user's risk as only first 9 items get through
         etank = min(number_list)
@@ -137,8 +137,6 @@ class StateVar:
 
     def stt_numerise(self):
         # output format: [8*(0–24), (0–4)]
-        boss_ante = [12, 16, 13, 19, 9, 20, 23, 21]  # pre-win values
-        boss_post = [15, 22, 8, 6, 17, 24, 10, 14]  # post-win values
         pswd = []
         for i, cond in enumerate(self.bossi):
             boss = boss_post[i] if cond else boss_ante[i]
@@ -151,13 +149,15 @@ class StateVar:
         return NumList(pswd)  # as list of 9 numbers
 
     def stt_binarise(self):
+        bossi = self.bossi
+        bossi = [bossi[3], bossi[1], bossi[4], bossi[0], bossi[2], bossi[6], bossi[5], bossi[7]]
         items = sum(cond << i
                     for i, cond
                     in enumerate(
-                      (self.bossi[3], self.bossi[1], self.bossi[6])))
+                      (bossi[0], bossi[1], bossi[5])))
         bossi = sum((cond << i
                      for i, cond
-                     in enumerate(self.bossi)))
+                     in enumerate(bossi)))
         return StateBin(bossi, items, self.etank)
 
 
